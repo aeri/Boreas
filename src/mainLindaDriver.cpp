@@ -7,8 +7,6 @@
 //            mainLindaDriver IP_LindaServer Port_LindaServer ...
 //*****************************************************************
 
-...
-
 #include "LindaDriver.hpp"
 #include "Tuplas.hpp"
 
@@ -18,16 +16,16 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     //faltan argumentos en la invocación?
-    if (argc < ... ) { 
+    if (argc < 2 ) { 
         cerr << "Invocar como:" << endl;
-        cerr << "   mainLindaDriver <IP_LS> <Port_LS> ..." << endl;
+        cerr << "   mainLindaDriver <IP_LS> <Port_LS>" << endl;
         cerr << "      <IP_LS>: IP del servidor Linda" << endl;
         cerr << "      <Port_LS>: puerto del servidor Linda" << endl;
         return 1;
     }
 
     // un driver con los datos pasados en la invocación
-    LindaDriver LD(argv[1], argv[2], ...);
+    LindaDriver LD(argv[1], argv[2]);
     // La conexión con el servidor Linda ya está establecido
 
     // Varias formas de construir tuplas
