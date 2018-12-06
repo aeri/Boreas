@@ -61,10 +61,10 @@ void from_string (string t){
 
 string Tupla::to_string (){
 	string cadena = "[";
-	for (int i = 0; i < dimension; i++){
-			cadena = cadena + vector[i];
+	for (int i = 0; i < dimension - 1; i++){
+			cadena = cadena + vector[i] + ",";
 	}
-	cadena = cadena + "]";
+	cadena = cadena + vector[dimension - 1] + "]";
 	return cadena;
 }
 

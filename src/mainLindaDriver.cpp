@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
     // un driver con los datos pasados en la invocación
     LindaDriver LD(argv[1], argv[2]);
-    // La conexión con el servidor Linda ya está establecido
+    // La conexión con el servidor Linda ya está establecida
 
     // Varias formas de construir tuplas
     Tupla t1("1","mi casa","árbol");  // 3 elementos

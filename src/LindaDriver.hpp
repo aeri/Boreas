@@ -4,11 +4,14 @@
 #include <cstring>
 #include <iostream>
 #include "tuplas.hpp"
+#include "Socket.hpp"
 
 class LD{
 private:
-	string port;
+	int port;
 	string ip;
+	Socket socket;
+	int socket_fd;
 
 public:
 
