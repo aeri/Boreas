@@ -1,25 +1,34 @@
 #include <iostream>
 #include <iomanip>
 #include <cstring>
-#include "LindaDriver.hpp"
+#include <sstream>
+#include <thread>
+#include "tuplas.hpp"
 #include "Socket.hpp"
+#include "LindaDriver.hpp"
 
 using namespace std;
 
 
+int tamanyo (string s){
+	stringstream ss(s);
+	int dimension = 1;
+	for (unsigned int i = 0; i < s.size(); i++){
+		if (ss.get() == ','){
+			++dimension;
+		}
+	}
+	return dimension;
+}
 
-LD::LD (string p, string i){
-	port = p;
-	ip = stoi(i,10);
-	Socket socket(ip, port);
-
-
+LD::LD (string ip, string p): Socket (ip,stoi(p)){
+	
 	const int MAX_ATTEMPS = 10;
 	int count = 0;
 	
 	do {
 	// Conexión con el servidor
-    		socket_fd = socket.Connect();
+    		socket_fd = Connect();
     		count++;
 
 	// Si error --> esperamos 1 segundo para reconectar
@@ -33,99 +42,125 @@ LD::LD (string p, string i){
    		cout << "Error Grave" << endl;
    	 }
 
-}
+};
 
 void LD::PN (Tupla t){
-	const string MENS_FIN("END OF SERVICE");
 	const int MESSAGE_SIZE = 4001;
-	int send_bytes = socket.Send(socket_fd, "PN");
+	int send_bytes = Send(socket_fd, "PN");
 	if(send_bytes == -1){
 		cerr << "Error al enviar datos: " << strerror(errno) << endl;
 		// Cerramos el socket
-		socket.Close(socket_fd);
+		Close(socket_fd);
 		exit(1);
 	}
-
-	if(mensaje != MENS_FIN){
+	cout << "Enviado PN" << endl;
 	    // Buffer para almacenar la respuesta, como char[]
 	    string buffer;
-	    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-	}
+	    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
-	if (strcmp("OK",buffer) != 0){
-		int send_bytes = socket.Send(socket_fd, t.to_string());
+	    if (read_bytes == -1) {
+			string mensError(strerror(errno));
+    		cerr << "Error al recibir datos: " + mensError + "\n";
+			// Cerramos los sockets
+			Close(socket_fd);
+		}
+	cout << "\033[1;41m" << buffer <<"\033[0m\n";
+	if (buffer == "OK"){
+		cout << "Enviando Tupla..." << endl;
+		int send_bytes = Send(socket_fd, t.to_string());
 		if(send_bytes == -1){
 			cerr << "Error al enviar datos: " << strerror(errno) << endl;
 			// Cerramos el socket
-			socket.Close(socket_fd);
+			Close(socket_fd);
 			exit(1);
 		}
 	}
+};
 
 Tupla LD::RN (Tupla t){
-	const string MENS_FIN("END OF SERVICE");
 	const int MESSAGE_SIZE = 4001;
-	int send_bytes = socket.Send(socket_fd, "RN");
+	int send_bytes = Send(socket_fd, "RN");
 	if(send_bytes == -1){
 		cerr << "Error al enviar datos: " << strerror(errno) << endl;
 		// Cerramos el socket
-		socket.Close(socket_fd);
+		Close(socket_fd);
 		exit(1);
 	}
 
-	if(mensaje != MENS_FIN){
-	    // Buffer para almacenar la respuesta, como char[]
-	    string buffer;
-	    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+    // Buffer para almacenar la respuesta, como char[]
+    string buffer;
+    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+	if (read_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al recibir datos: " + mensError + "\n";
+		// Cerramos los sockets
+		Close(socket_fd);
 	}
 
-	if (strcmp("OK",buffer) != 0){
-		int send_bytes = socket.Send(socket_fd, t.to_string());
+	if (buffer == "OK"){
+		 send_bytes = Send(socket_fd, t.to_string());
 		if(send_bytes == -1){
 			cerr << "Error al enviar datos: " << strerror(errno) << endl;
 			// Cerramos el socket
-			socket.Close(socket_fd);
+			Close(socket_fd);
 			exit(1);
 		}
 	}
-	if(mensaje != MENS_FIN){
-	    // Buffer para almacenar la respuesta, como char[]
-	    string buffer;
-	    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+    
+	read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+	if (read_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al recibir datos: " + mensError + "\n";
+		// Cerramos los sockets
+		Close(socket_fd);
 	}
-	return from_string(buffer);
-}
+	Tupla r(tamanyo(buffer));
+	r.from_string(buffer);
+	return r;
+};
 
 Tupla LD::ReadN (Tupla t){
-	const string MENS_FIN("END OF SERVICE");
 	const int MESSAGE_SIZE = 4001;
-	int send_bytes = socket.Send(socket_fd, "ReadN");
+	int send_bytes = Send(socket_fd, "ReadN");
 	if(send_bytes == -1){
 		cerr << "Error al enviar datos: " << strerror(errno) << endl;
 		// Cerramos el socket
-		socket.Close(socket_fd);
+		Close(socket_fd);
 		exit(1);
 	}
 
-	if(mensaje != MENS_FIN){
-	    // Buffer para almacenar la respuesta, como char[]
-	    string buffer;
-	    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+    // Buffer para almacenar la respuesta, como char[]
+    string buffer;
+    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+	if (read_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al recibir datos: " + mensError + "\n";
+		// Cerramos los sockets
+		Close(socket_fd);
 	}
 
-	if (strcmp("OK",buffer) != 0){
-		int send_bytes = socket.Send(socket_fd, t.to_string());
+	if (buffer == "OK"){
+		send_bytes = Send(socket_fd, t.to_string());
 		if(send_bytes == -1){
 			cerr << "Error al enviar datos: " << strerror(errno) << endl;
 			// Cerramos el socket
-			socket.Close(socket_fd);
+			Close(socket_fd);
 			exit(1);
 		}
 	}
-	if(mensaje != MENS_FIN){
 	    // Buffer para almacenar la respuesta, como char[]
-	    string buffer;
-	    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+	    read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+	if (read_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al recibir datos: " + mensError + "\n";
+		// Cerramos los sockets
+		Close(socket_fd);
 	}
-	return from_string(buffer);
-}
+	Tupla r(tamanyo(buffer));
+	r.from_string(buffer);
+	return r;
+};

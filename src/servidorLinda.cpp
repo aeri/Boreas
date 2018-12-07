@@ -6,15 +6,68 @@
 
 #include <mutex>
 
-
+bool STOP = false;
 const int N = 10;
+
+void servCliente(Socket& soc, int client_fd) {
+	
+	// Buffer para recibir el mensaje
+
+	char MENS_FIN[]="END OF SERVICE";
+	// Buffer para recibir el mensaje
+	int length = 100;
+	char buffer[length];
+
+	bool out = false; // Inicialmente no salir del bucle
+	while(!out) {
+		// Recibimos el mensaje del cliente
+		int rcv_bytes = soc.Recv(client_fd,buffer,length);
+		if (rcv_bytes == -1) {
+			string mensError(strerror(errno));
+    		cerr << "Error al recibir datos: " + mensError + "\n";
+			// Cerramos los sockets
+			soc.Close(client_fd);
+		}
+
+		cout << "Mensaje recibido: " << buffer << endl;
+		int send_bytes = soc.Send(client_fd, "OK");
+
+
+
+		rcv_bytes = soc.Recv(client_fd,buffer,length);
+		if (rcv_bytes == -1) {
+			string mensError(strerror(errno));
+    		cerr << "Error al recibir datos: " + mensError + "\n";
+			// Cerramos los sockets
+			soc.Close(client_fd);
+		}
+
+		cout << "Tupla: " << buffer << endl;
+		// Si recibimos "END OF SERVICE" --> Fin de la comunicación
+	}
+
+	soc.Close(client_fd);
+}
+
 
 int main(int argc, char *argv[]) {
 	
+ if (argc < 2 ) { 
+        cerr << "Invocar como:" << endl;
+        cerr << "   servidorLinda <Port_LS>" << endl;
+        cerr << "      <Port_LS>: puerto del servidor Linda" << endl;
+        return 1;
+    }
+
+
 	string SERVER_ADDRESS = "localhost";
 	int SERVER_PORT=atoi(argv[1]);
 	thread cliente[N];
 	int client_fd[N];
+
+	cout << "Iniciando servidor Linda en puerto " << SERVER_PORT << endl;
+
+
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
@@ -45,7 +98,7 @@ int main(int argc, char *argv[]) {
 	int i =0;
 	
 	//Atendemos a las peticiones de los clientes
-	while(i<max_connections && !finTOTAL){
+	while(i<max_connections && !STOP){
 			// Accept
 			client_fd[i] = socket.Accept();
 
@@ -56,7 +109,7 @@ int main(int argc, char *argv[]) {
 				socket.Close(socket_fd);
 				exit(1);
 			}
-			if(!finTOTAL){
+			if(!STOP){
 				string aux="Lanzo thread nuevo cliente "+ to_string(i)+"\n";
 
 				cout << aux;
@@ -73,4 +126,5 @@ int main(int argc, char *argv[]) {
 			}
 	}
 	//join();
+	return 0;
 }
