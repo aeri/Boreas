@@ -21,7 +21,7 @@ void servCliente(Socket& soc, int client_fd) {
 	bool out = false; // Inicialmente no salir del bucle
 	while(!out) {
 		// Recibimos el mensaje del cliente
-		int rcv_bytes = soc.Recv(client_fd,buffer,length);
+		int rcv_bytes = soc.Recv(client_fd, buffer, length);
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
@@ -34,7 +34,7 @@ void servCliente(Socket& soc, int client_fd) {
 
 
 
-		rcv_bytes = soc.Recv(client_fd,buffer,length);
+		rcv_bytes = soc.Recv(client_fd, buffer, length);
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
