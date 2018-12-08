@@ -1,4 +1,5 @@
-#include "ControlGasolinera.hpp"
+#include <queue>
+#include "monitorLinda.hpp"
 #include <cassert>
 
 
@@ -11,7 +12,7 @@
 
 
 //-----------------------------------------------------
-ControlGasolinera::ControlGasolinera(const int NS) {
+MonitorLinda::MonitorLinda(const int NS) {
 	surtidor = new bool[NS];
 	for (int i = 0; i < NS; i++) {
 		surtidor[i] = false;
@@ -21,7 +22,7 @@ ControlGasolinera::ControlGasolinera(const int NS) {
 	quiereMantenimiento = false;
 };
 
-ControlGasolinera::ControlGasolinera(const int NS, Logger *logger) {
+MonitorLinda::MonitorLinda(const int NS, Logger *logger) {
 	surtidor = new bool[NS];
 	for (int i = 0; i < NS; i++) {
 		surtidor[i] = false;
@@ -33,61 +34,45 @@ ControlGasolinera::ControlGasolinera(const int NS, Logger *logger) {
 };
 
 
-ControlGasolinera::~ControlGasolinera() {
+MonitorLinda::~MonitorLinda() {
  	delete[] surtidor;
 };
 
-    // Se bloquea hasta que hay un surt libre
-    // Devuelve en el <surt> un numero de surt, que estaba libre. El surt pasa a estar ocupado
-void ControlGasolinera::dameSurtidor(int &surt) {
-	unique_lock<mutex> lck(mtxMonitor);	
-	LOG(log,"BEGIN_FUNC_PROC,dameSurtidor, " + to_string(nLibres));
-	while ((nLibres <= 0) || quiereMantenimiento) { 
-		estaLibre.wait(lck);
-	}
-	nLibres--;
-    surt = 0;
-    while (!surtidor[surt] && surt < NS) {
-        surt++; 
-    } 
-	surtidor[surt-1] = true;
-	LOG(log,"END_FUNC_PROC,dameSurtidor, "+to_string(nLibres));
-};
+    MonitorLinda();
 
-// Libera el surt <surt>
-void ControlGasolinera::dejoSurtidor(const int surt) {
-	unique_lock<mutex> lck(mtxMonitor);
-	LOG(log,"BEGIN_FUNC_PROC,dejoSurtidor, " + to_string(nLibres));
-	nLibres++;
-	surtidor[surt-1] = false;
-	if (quiereMantenimiento && (nLibres == NS)) {
-		estaMantenimiento.notify_one();
-	}
-	else {
-		estaLibre.notify_all();
-	}
-	LOG(log,"END_FUNC_PROC,dejoSurtidor, " + to_string(nLibres));
-};
 
-// Avisa de que va a empezar un proceso de mantenimiento.
-// Desde este momento, ningún surt, aunque esté libre, será concedido
-// Cuando todos los surtes estén libres, podrá llevar a cabo el mantenimiento
-void ControlGasolinera::beginMantenimiento() {
-	unique_lock<mutex> lck(mtxMonitor);
-	LOG(log,"BEGIN_FUNC_PROC,beginMantenimiento, " + to_string(nLibres));
-	quiereMantenimiento = true;
-	while (nLibres < NS) {
-		estaMantenimiento.wait(lck);
-	}
-	LOG(log,"END_FUNC_PROC,beginMantenimiento, " + to_string(nLibres));
-};
+    //----------------- Destructor
+    ~MonitorLinda();
 
-// Avisa de fin de tarea de mantenimiento. A partir de este momento ya podrán
-// concederse surtes
-void ControlGasolinera::endMantenimiento() {
-	unique_lock<mutex> lck(mtxMonitor);
-	LOG(log,"BEGIN_FUNC_PROC,endMantenimiento, " + to_string(nLibres));
-	quiereMantenimiento = false;
-	estaLibre.notify_all();	
-	LOG(log,"END_FUNC_PROC,endMantenimiento, " + to_string(nLibres));
-};
+
+    void RemoveNote(Tupla t) {
+    	unique_lock<mutex> lck(mtxMonitor);
+
+    	int dimension = t.size();
+    	switch (dimension) {
+    		case 1:
+    			coladim1.push(t);
+    		case 2:
+    			coladim2.push(t);
+    		case 3:
+    			coladim3.push(t);
+    		case 4:
+    			coladim4.push(t);
+    		case 5:
+    			coladim5.push(t);
+    		case 6:
+    			coladim6.push(t);
+    	}
+
+
+    };
+
+    void PostNote(Tupla t) {
+    	unique_lock<mutex> lck(mtxMonitor);
+    }
+
+
+
+
+
+

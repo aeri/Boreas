@@ -1,50 +1,41 @@
-#ifndef MONITOR
-#define MONITOR
+#ifndef MONITORLinda
+#define MONITORLinda
 
+#include <queue>
 #include <iostream>
 #include <string>
 #include <mutex>
 #include <condition_variable>
+#include "tuplas.hpp"
 
 using namespace std;
 
-class ControlGasolinera {
+class MonitorLinda {
 public:
-    //----------------- Constructores
-    // <NS>: número de surtidores de la gasolinera
-    ControlGasolinera(const int NS);
 
-    // <NS>: número de surtidores de la gasolinera
-    // <logger>: referencia a un objeto de la clase "Logger"
-    ControlGasolinera(const int NS, Logger *logger);
+    MonitorLinda();
+
 
     //----------------- Destructor
-    ~ControlGasolinera();
+    ~MonitorLinda();
 
-    // Se bloquea hasta que hay un surtidor libre
-    // Devuelve en el <surt> un numero de surtidor, que estaba libre. El surtidor pasa a estar ocupado
-    void dameSurtidor(int &surt);
 
-    // Libera el surtidor <surt>
-    void dejoSurtidor(const int surt);
+    void RemoveNote(Tupla t);
 
-    // Avisa de que va a empezar un proceso de mantenimiento.
-    // Desde este momento, ningún surtidor, aunque esté libre, será concedido
-    // Cuando todos los surtidores estén libres, podrá llevar a cabo el mantenimiento
-    void beginMantenimiento();
+    void PostNote(Tupla t);
 
-    // Avisa de fin de tarea de mantenimiento. A partir de este momento ya podrán
-    // concederse surtidores
-    void endMantenimiento();
+    
 
 private:
-    int nLibres;  //num de surtidores libres
-    int NS;
     bool *surtidor;
-    bool quiereMantenimiento;
-    Logger *log;
     mutex mtxMonitor; //FUNDAMENTAL: mutex usarán las funcs 
-    condition_variable estaLibre;
-    condition_variable estaMantenimiento;
+    condition_variable haytupla;
+
+    queue<int> coladim1;
+    queue<int> coladim2;
+    queue<int> coladim3;
+    queue<int> coladim4;
+    queue<int> coladim5;
+    queue<int> coladim6;  
 };
 #endif
