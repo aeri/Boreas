@@ -1,15 +1,16 @@
 #ifndef MONITOR
 #define MONITOR
 
-#include <iostream>
-#include <string>
-#include <mutex>
 #include <condition_variable>
+#include <iostream>
+#include <mutex>
+#include <string>
 
 using namespace std;
 
-class ControlGasolinera {
-public:
+class ControlGasolinera
+{
+   public:
     //----------------- Constructores
     // <NS>: número de surtidores de la gasolinera
     ControlGasolinera(const int NS);
@@ -37,13 +38,13 @@ public:
     // concederse surtidores
     void endMantenimiento();
 
-private:
-    int nLibres;  //num de surtidores libres
+   private:
+    int nLibres;  // num de surtidores libres
     int NS;
     bool *surtidor;
     bool quiereMantenimiento;
     Logger *log;
-    mutex mtxMonitor; //FUNDAMENTAL: mutex usarán las funcs 
+    mutex mtxMonitor;  // FUNDAMENTAL: mutex usarán las funcs
     condition_variable estaLibre;
     condition_variable estaMantenimiento;
 };

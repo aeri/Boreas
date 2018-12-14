@@ -1,78 +1,84 @@
 #include <queue>
+#include <thread>
+#include "Socket.hpp"
 #include "monitorLinda.hpp"
-#include <cassert>
 
+using namespace std;
 
-//si DEBUG_MODE, generará eventos en log; si no, no hará nada
-#if DEBUG_MODE 
-    #define LOG(l,s) l->addMessage(s); //LOG(log, mensaje): añade "mensaje" evento en "log"
-#else
-    #define LOG(l,s)                   //LOG(log, mensaje): no hace nada
-#endif
-
+const int MAX_ATTEMPS = 10;
 
 //-----------------------------------------------------
-MonitorLinda::MonitorLinda(const int NS) {
-	surtidor = new bool[NS];
-	for (int i = 0; i < NS; i++) {
-		surtidor[i] = false;
+MonitorLinda::MonitorLinda(const string ip1,
+                           const int p1,
+                           const string ip2,
+                           const int p2,
+                           const string ip3,
+                           const int p3)
+{
+    int count = 0;
+    int socket_s1;
+    int socket_s2;
+    int socket_s3;
+
+    Socket server1(ip1, p1);
+    Socket server2(ip2, p2);
+    Socket server3(ip3, p3);
+
+    do
+	{
+	    // Conexión con el servidor
+	    socket_s1 = server1.Connect();
+	    socket_s2 = server2.Connect();
+	    socket_s3 = server3.Connect();
+	    count++;
+
+	    // Si error --> esperamos 1 segundo para reconectar
+	    if(socket_s1 == -1 || socket_s2 == -1 || socket_s3 == -1)
+		{
+		    this_thread::sleep_for(chrono::seconds(1));
+		}
 	}
-	this->NS = NS;
-	nLibres = NS;
-	quiereMantenimiento = false;
-};
+    while((socket_s1 == -1 || socket_s2 == -1 || socket_s3 == -1) && count < MAX_ATTEMPS);
 
-MonitorLinda::MonitorLinda(const int NS, Logger *logger) {
-	surtidor = new bool[NS];
-	for (int i = 0; i < NS; i++) {
-		surtidor[i] = false;
+    // Chequeamos si se ha realizado la conexión
+    if(socket_s1 == -1 || socket_s2 == -1 || socket_s3 == -1)
+	{
+        cerr << "Error al conectar" << endl;
 	}
-	this->NS = NS;
-	log = logger;  
-	nLibres = NS;
-	quiereMantenimiento = false;
-};
-
-
-MonitorLinda::~MonitorLinda() {
- 	delete[] surtidor;
-};
-
-    MonitorLinda();
-
-
-    //----------------- Destructor
-    ~MonitorLinda();
-
-
-    void RemoveNote(Tupla t) {
-    	unique_lock<mutex> lck(mtxMonitor);
-
-    	int dimension = t.size();
-    	switch (dimension) {
-    		case 1:
-    			coladim1.push(t);
-    		case 2:
-    			coladim2.push(t);
-    		case 3:
-    			coladim3.push(t);
-    		case 4:
-    			coladim4.push(t);
-    		case 5:
-    			coladim5.push(t);
-    		case 6:
-    			coladim6.push(t);
-    	}
-
-
-    };
-
-    void PostNote(Tupla t) {
-    	unique_lock<mutex> lck(mtxMonitor);
+    else{
+        cout << "Servidores conectados" << endl;    
     }
+};
 
+MonitorLinda::~MonitorLinda(){
 
+};
 
+//----------------- Destructor
+/*
+void MonitorLinda::RemoveNote(Tupla t)
+{
+    unique_lock<mutex> lck(mtxMonitor);
 
+    
 
-
+};
+*/
+void MonitorLinda::PostNote(Tupla t)
+{
+    unique_lock<mutex> lck(mtxMonitor);
+    int dimension = t.size();
+    switch(dimension)
+	{
+	case 1:
+    case 2:
+    case 3:    
+        cout << "<=3";
+    case 4:
+    case 5:
+        cout << "4||5";
+	    // coladim1.push(t);
+	default:
+        cout << "6";
+	}
+};

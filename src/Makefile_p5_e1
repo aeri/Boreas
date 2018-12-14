@@ -13,6 +13,7 @@
 CC=g++
 
 DRIVER=LindaDriver
+MONITOR=monitorLinda
 CLIENT=mainLindaDriver
 SERVER=servidorLinda
 TUPLAS=tuplas
@@ -27,6 +28,15 @@ all: ${CLIENT} ${SERVER}
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
 #SOCKETSFLAGS=-lsocket -lnsl
+#-----------------------------------------------------------
+# MONITOR
+# Compilacion
+${MONITOR}.o: ${MONITOR}.hpp ${MONITOR}.cpp
+	${CC} -c ${CPPFLAGS} ${MONITOR}.cpp
+
+# Linkado
+${MONITOR}: ${TUPLAS}.o ${SOCKET}.o ${MONITOR}.o  
+	${CC} ${TUPLAS}.o ${SOCKET}.o ${MONITOR}.o -o ${MONITOR} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # DRIVER
 # Compilacion
@@ -52,8 +62,8 @@ ${SERVER}.o: ${SERVER}.cpp
 	${CC} -c ${CPPFLAGS} ${SERVER}.cpp
 
 # Linkado
-${SERVER}: ${SOCKET}.o ${SERVER}.o
-	${CC} ${LDFLAGS} ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
+${SERVER}: ${MONITOR}.o ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o
+	${CC} ${LDFLAGS} ${MONITOR}.o ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SOCKETS
 # Compilacion libreria de Sockets
@@ -64,11 +74,12 @@ ${SOCKET}.o: ${SOCKET}.hpp ${SOCKET}.cpp
 # Compilacion
 ${TUPLAS}.o: ${TUPLAS}.hpp  ${TUPLAS}.cpp 
 	${CC} -c ${CPPFLAGS} ${TUPLAS}.cpp -o ${TUPLAS}.o
-#-----------------------------------------------------------	
+#-----------------------------------------------------------		
 # LIMPIEZA
 clean:
 	$(RM) ${SOCKET}.o
+	$(RM) ${TUPLAS}.o
 	$(RM) ${CLIENT} ${CLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o
 	$(RM) ${DRIVER} ${DRIVER}.o
-	$(RM) ${TUPLAS} ${TUPLAS}.o
+	$(RM) ${MONITOR} ${MONITOR}.o
