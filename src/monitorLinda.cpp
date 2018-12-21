@@ -74,6 +74,28 @@ void MonitorLinda::PostNote(Tupla t)
     case 2:
     case 3:    
         cout << "<=3";
+        int send_bytes = server1.Send(socket_s1, t.to_string());
+
+        if(send_bytes == -1){
+            cerr << "Error al enviar datos: " << strerror(errno) << endl;
+            // Cerramos el socket
+            server1.Close(socket_fd);
+        }
+        if(mensaje != MENS_FIN){
+                    // Buffer para almacenar la respuesta, como char[]
+                    string buffer;
+
+                    // Recibimos la respuesta del servidor  
+                    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+                    // Mostramos la respuesta
+                    cout << "Mensaje enviado: '" << mensaje << "'" << endl;
+                    cout << "Numero de vocales: " << buffer << endl;
+                
+            exit(1);
+        }
+        haytupla1.notify_all();
+
     case 4:
     case 5:
         cout << "4||5";

@@ -39,6 +39,8 @@ class MonitorLinda
     condition_variable haytupla5;
     condition_variable haytupla6;
 
+    void MonitorLinda::PostNote(Tupla t);
+
     /*
     queue<int> coladim1;
     queue<int> coladim2;
