@@ -152,7 +152,7 @@ int Socket::Recv(int fd, char* buffer, int buffer_length) {
 	bzero(ack, ACK_BUFFER_SIZE);
 	strcpy(ack, "ACK"); 
 
-	int sent_bytes = send(fd, ack, strlen(ack), 0);
+	send(fd, ack, strlen(ack), 0);
 
 	// Devolvemos número de bytes leídos
 	return num_bytes;
@@ -188,7 +188,7 @@ ssize_t Socket::Send(int fd, const char* message) {
 
 	// Leemos todos los datos posibles que quepan en el buffer
 	//Será "ACK"
-	int rcv_bytes = recv(fd, ack_buffer, ACK_BUFFER_SIZE-1, 0);
+	recv(fd, ack_buffer, ACK_BUFFER_SIZE-1, 0);
 
 	// Comprobamos que no haya error enviando el ACK
 	if( 0 != strcmp(ack_buffer,"ACK") ) {

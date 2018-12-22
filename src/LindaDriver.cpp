@@ -85,6 +85,7 @@ void LD::PN(Tupla t)
 		    exit(1);
 		}
 	}
+	read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 };
 
 Tupla LD::RN(Tupla t)

@@ -71,13 +71,13 @@ void Tupla::from_string(string t)
 	    while(i > 1)
 		{
 		    getline(ss, token, ',');
-		    cout << token << endl;
+		    //cout << token << endl;
 		    vector[i] = token;
 		    i--;
 		}
 	    getline(ss, token, ']');
 	    vector[i - 1] = token;
-	    cout << token << endl;
+	    //cout << token << endl;
 	}
     else
 	{

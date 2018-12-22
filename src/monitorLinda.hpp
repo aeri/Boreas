@@ -7,18 +7,14 @@
 #include <queue>
 #include <string>
 #include "tuplas.hpp"
+#include "Socket.hpp"
 
 using namespace std;
 
 class MonitorLinda
 {
    public:
-    MonitorLinda(const string ip1,
-                    const int p1,
-                    const string ip2,
-                    const int p2,
-                    const string ip3,
-                    const int p3);
+    MonitorLinda();
 
     //----------------- Destructor
     ~MonitorLinda();
@@ -35,11 +31,14 @@ class MonitorLinda
     condition_variable haytupla1;
     condition_variable haytupla2;
     condition_variable haytupla3;
-    condition_variable haytupla4;
-    condition_variable haytupla5;
-    condition_variable haytupla6;
 
-    void MonitorLinda::PostNote(Tupla t);
+    string ip1;
+    int p1;
+    string ip2;
+    int p2;
+    string ip3;
+    int p3;
+
 
     /*
     queue<int> coladim1;
