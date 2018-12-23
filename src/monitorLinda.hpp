@@ -19,18 +19,28 @@ class MonitorLinda
     //----------------- Destructor
     ~MonitorLinda();
 
-    void RemoveNote(Tupla t);
-
-    void ReadNote(Tupla t);
-
     void PostNote(Tupla t);
 
+    void RemoveNote(Tupla t, Tupla& r);
+
+    void ReadNote(Tupla t, Tupla& r);
+
    private:
+    struct bbdd{
+        struct Nodo
+            {
+                string valor;
+                Nodo* sigComp;
+                Nodo* sigTupla;
+            };
+            Nodo* primero;
+    };
+
+    bbdd tupleSpace;
+
     mutex mtxMonitor;  // FUNDAMENTAL: mutex usarán las funcs
 
-    condition_variable haytupla1;
-    condition_variable haytupla2;
-    condition_variable haytupla3;
+    condition_variable hay_tupla;
 
     string ip1;
     int p1;

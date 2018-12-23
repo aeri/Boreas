@@ -17,14 +17,14 @@ MONITOR=monitorLinda
 CLIENT=mainLindaDriver
 SERVER=servidorLinda
 TUPLAS=tuplas
-ALMACENAMIENTO=servei
+SERVEI=servei
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
 
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${ALMACENAMIENTO}
+all: ${CLIENT} ${SERVER} ${SERVEI}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -66,14 +66,14 @@ ${SERVER}.o: ${SERVER}.cpp
 ${SERVER}: ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o
 	${CC} ${LDFLAGS} ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
-# ALMACENAMIENTO
+# SERVEI
 # Compilacion
-${ALMACENAMIENTO}.o: ${ALMACENAMIENTO}.cpp 
-	${CC} -c ${CPPFLAGS} ${ALMACENAMIENTO}.cpp
+${SERVEI}.o: ${SERVEI}.cpp 
+	${CC} -c ${CPPFLAGS} ${SERVEI}.cpp
 
 # Linkado
-${ALMACENAMIENTO}: ${TUPLAS}.o ${SOCKET}.o ${ALMACENAMIENTO}.o
-	${CC} ${LDFLAGS} ${TUPLAS}.o ${SOCKET}.o ${ALMACENAMIENTO}.o -o ${ALMACENAMIENTO} ${SOCKETSFLAGS}
+${SERVEI}: ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVEI}.o
+	${CC} ${LDFLAGS} ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVEI}.o -o ${SERVEI} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SOCKETS
 # Compilacion libreria de Sockets
@@ -91,6 +91,6 @@ clean:
 	$(RM) ${TUPLAS}.o
 	$(RM) ${CLIENT} ${CLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o
-	$(RM) ${ALMACENAMIENTO} ${ALMACENAMIENTO}.o
+	$(RM) ${SERVEI} ${SERVEI}.o
 	$(RM) ${DRIVER} ${DRIVER}.o
 	$(RM) ${MONITOR} ${MONITOR}.o

@@ -66,49 +66,49 @@ void Tupla::from_string(string t)
     bool incorrecto = false;
     int i = dimension;
     if(ss.get() == '[')
-	{
-	    string token;
-	    while(i > 1)
-		{
-		    getline(ss, token, ',');
-		    //cout << token << endl;
-		    vector[i] = token;
-		    i--;
-		}
-	    getline(ss, token, ']');
-	    vector[i - 1] = token;
-	    //cout << token << endl;
-	}
+    {
+        string token;
+        while(i > 1)
+        {
+            getline(ss, token, ',');
+            //cout << token << endl;
+            vector[dimension - i] = token;
+            i--;
+        }
+        getline(ss, token, ']');
+        vector[dimension-1] = token;
+        //cout << token << endl;
+    }
     else
-	{
-	    incorrecto = true;
-	}
+    {
+        incorrecto = true;
+    }
 
     if(incorrecto)
-	{
-	    cerr << "El formato de entrada es incorrecto" << endl;
-	}
+    {
+        cerr << "El formato de entrada es incorrecto" << endl;
+    }
 };
 
 string Tupla::to_string()
 {
     string cadena = "[";
     for(int i = 0; i < dimension - 1; i++)
-	{
-	    cadena = cadena + vector[i] + ",";
-	}
+    {
+        cadena = cadena + vector[i] + ",";
+    }
     cadena = cadena + vector[dimension - 1] + "]";
     return cadena;
 };
 
 string Tupla::get(int indice)
 {
-    return vector[indice];
+    return vector[indice-1];
 };
 
 void Tupla::set(int indice, string campo)
 {
-    vector[indice] = campo;
+    vector[indice-1] = campo;
 };
 
 int Tupla::size()

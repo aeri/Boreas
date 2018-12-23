@@ -7,6 +7,7 @@
 
 #include "Socket.hpp"
 #include "tuplas.hpp"
+#include "monitorLinda.hpp"
 #include <iostream>
 #include <thread>
 #include <sstream>
@@ -38,7 +39,7 @@ int tamanyo(string s)
 // PRE: 
 // POST: Devuelve el número de vocales existentes en el mensaje 'message'
 //-------------------------------------------------------------
-void servCliente(Socket& soc, int client_fd) {
+void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 	char MENS_FIN[]="END OF SERVICE";
 	// Buffer para recibir el mensaje
 	int length = 100;
@@ -61,8 +62,11 @@ void servCliente(Socket& soc, int client_fd) {
 		char* tupla = strtok (NULL, ":");
 		int ssize = tamanyo(tupla);
 		Tupla t (ssize);
+		t.from_string(tupla);
 		cout << "Operacion recibida: " << operacion << endl;
 		cout << "Tupla recibida: " << tupla << endl;
+
+		string message;
 
 		// Si recibimos "END OF SERVICE" --> Fin de la comunicación
 		if (0 == strcmp(buffer, MENS_FIN)) {
@@ -71,9 +75,23 @@ void servCliente(Socket& soc, int client_fd) {
 			// Contamos las vocales recibidas en el mensaje anterior
 		
 			
+			if (strcmp(operacion,"PN" )== 0){
+				ML.PostNote(t);
+				message = "OK";
+			}
+			else if (strcmp(operacion,"ReadN" )== 0){
+				Tupla r (ssize);
+				ML.ReadNote(t,r);
+				message = r.to_string();
+				cout << "La tupla que se devuelve al cliente queda así: " <<  message << endl;
+			}
+			else if (strcmp(operacion,"RN") == 0){
+				Tupla r (ssize);
+				ML.RemoveNote(t,r);
+				message = r.to_string();
+				cout << "La tupla que se devuelve al cliente queda así: " <<  message << endl;
+			}
 			// Enviamos la respuesta
-			
-			const char* message = "OK";
 		
 			int send_bytes = soc.Send(client_fd, message);
 			if(send_bytes == -1) {
@@ -103,6 +121,9 @@ int main(int argc, char* argv[]) {
     int SERVER_PORT = atoi(argv[1]);
     thread cliente[N];
     int client_fd[N];
+
+
+	MonitorLinda ML;
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
@@ -140,7 +161,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
-		cliente[i] = thread(&servCliente, ref(socket), client_fd[i]);
+		cliente[i] = thread(&servCliente, ref(socket), client_fd[i], ref(ML));
 		cout << "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
 	}
 	

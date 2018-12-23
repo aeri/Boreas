@@ -32,11 +32,17 @@ int main(int argc, char* argv[])
     cout << "Conexión establecida con éxito" << endl;
     // Varias formas de construir tuplas
     Tupla t1("1", "mi casa", "árbol");  // 3 elementos
-    Tupla t2("1000");
+    Tupla t2("1000", "mi vida", "moodle");
     Tupla t3("aprieta", "el", "pan", "45", "34", "88");
     Tupla t4("aprieta", "fuerte", "pan", "tt", "34", "pan");
     // insertar las tuplas en linda: varios PostNote
     LindaDriver.PN(t1);
+    LindaDriver.PN(t2);
+    Tupla ttp("?X", "mi casa", "árbol");
+    LindaDriver.RN(ttp);
+    LindaDriver.RN(ttp);
+    cout << "El cliente recibe: " << ttp.to_string() << endl;
+    while (1);
     LindaDriver.PN(t2);
     LindaDriver.PN(t3);
     LindaDriver.PN(t3);

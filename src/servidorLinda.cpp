@@ -115,7 +115,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 	    cout << "Tupla: " << buffer << endl;
 	    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
 	    int ssize = tamanyo(buffer);
-	    Tupla t(ssize);
 	    message = operation + ":" + buffer;
 	    cout << "Mensaje a enviar: " << message << endl;
 
@@ -145,6 +144,69 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				}
 			    send_bytes = soc.Send(client_fd, "OK");
 			    cout << "             FIN PN" << endl;
+
+			    if(send_bytes == -1)
+				{
+				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    // Cerramos el socket
+				    soc.Close(client_fd);
+				}
+			}
+
+			else if(operation == "ReadN")
+			{
+				cout << "####READ NOTE####" << endl;
+			    int send_bytes = server1.Send(socket_s1, message);
+			    if(send_bytes == -1)
+				{
+				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    // Cerramos el socket
+				    server1.Close(socket_s1);
+				}
+				else{
+					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
+				}
+			    int read_bytes = server1.Recv(socket_s1, buffer, strlen(buffer));
+			    if(read_bytes == -1)
+				{
+				    string mensError(strerror(errno));
+				    cerr << "Error al recibir datos: " + mensError + "\n";
+				    // Cerramos los sockets
+				    server1.Close(socket_s1);
+				}
+			    send_bytes = soc.Send(client_fd, "OK");
+			    cout << "             FIN ReadN" << endl;
+
+			    if(send_bytes == -1)
+				{
+				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    // Cerramos el socket
+				    soc.Close(client_fd);
+				}
+			}
+			else
+				{
+				cout << "####REMOVE NOTE####" << endl;
+			    int send_bytes = server1.Send(socket_s1, message);
+			    if(send_bytes == -1)
+				{
+				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    // Cerramos el socket
+				    server1.Close(socket_s1);
+				}
+				else{
+					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
+				}
+			    int read_bytes = server1.Recv(socket_s1, buffer, strlen(buffer));
+			    if(read_bytes == -1)
+				{
+				    string mensError(strerror(errno));
+				    cerr << "Error al recibir datos: " + mensError + "\n";
+				    // Cerramos los sockets
+				    server1.Close(socket_s1);
+				}
+			    send_bytes = soc.Send(client_fd, buffer);
+			    cout << "             FIN RN" << endl;
 
 			    if(send_bytes == -1)
 				{

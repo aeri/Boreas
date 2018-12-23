@@ -72,7 +72,7 @@ void LD::PN(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-    cout << "\033[1;41m" << buffer << "\033[0m\n";
+    
     if(buffer == "OK")
 	{
 	    cout << "Enviando Tupla..." << endl;
@@ -86,6 +86,7 @@ void LD::PN(Tupla t)
 		}
 	}
 	read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+	cout << "\033[1;41m" << buffer << "\033[0m\n";
 };
 
 Tupla LD::RN(Tupla t)
@@ -184,6 +185,7 @@ Tupla LD::ReadN(Tupla t)
 	    Close(socket_fd);
 	}
     Tupla r(tamanyo(buffer));
+    cout << "BASURA" << endl;
     r.from_string(buffer);
     return r;
 };

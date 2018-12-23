@@ -1,6 +1,7 @@
 #include <queue>
 #include <thread>
 #include "monitorLinda.hpp"
+#include <iomanip>
 
 using namespace std;
 
@@ -9,7 +10,8 @@ const int MAX_ATTEMPS = 10;
 //-----------------------------------------------------
 MonitorLinda::MonitorLinda()
 {
-   
+
+    tupleSpace.primero=nullptr;
 };
 
 MonitorLinda::~MonitorLinda(){
@@ -27,61 +29,147 @@ void MonitorLinda::RemoveNote(Tupla t)
 };
 */
 
+bool sonIguales(string a, string b){
+    if (b[0] == '?' && b[1] > 'A' && b[1] < 'Z'){
+        return true;
+    }
+    else{
+        return a == b;
+    }
+}
 
-
-/*
-void MonitorLinda::ReadNote(Tupla t, Tupla& r, Socket& soc, int& descriptor){
+void MonitorLinda::PostNote(Tupla t){
     unique_lock<mutex> lck(mtxMonitor);
-    int dimension = t.size();
-    string buffer;
-    string message;
+    cout << "////MONITOR ESCRIBE" << endl; 
 
-    message = "ReadNote:" + t.to_string();
-        int send_bytes = soc.Send(descriptor, message);
+     bbdd::Nodo* np = new bbdd::Nodo;
 
-        if(send_bytes == -1){
-            cerr << "Error al enviar datos: " << strerror(errno) << endl;
-            // Cerramos el socket
-            soc.Close(socket_s1);
-        }
+     np->sigTupla = tupleSpace.primero;
 
-        // Recibimos la respuesta del servidor  
-        int read_bytes = soc.Recv(descriptor, buffer, MESSAGE_SIZE);
+     tupleSpace.primero = np;
 
-       
-        while(buffer == "false"){
 
-        if (tamanyo < 4){
-            haytupla1.wait(lck);
-        }
-        else if (tupla >= 4 && tupla < 6){
-            haytupla2.wait(lck);
+     for (int i = 1; i<= t.size(); ++i){
+        np->valor = t.get(i);
+        cout << np->valor << endl;
+        if (i != t.size()){
+            cout << "new!" << endl;
+            np->sigComp = new bbdd::Nodo;
+            np  = np ->sigComp;
+            
         }
         else{
-            haytupla3.wait(lck);
+            np->sigComp = nullptr;
         }
+        
+     }
+    cout << "////MONITOR ESCRIBE ACABA" << endl;
 
-            message = "ReadNote:" + t.to_string();
+/*
+    bbdd::Nodo* taux = tupleSpace.primero;
 
-            send_bytes = soc.Send(descriptor, message);
-
-            if(send_bytes == -1){
-                cerr << "Error al enviar datos: " << strerror(errno) << endl;
-                // Cerramos el socket
-                soc.Close(descriptor);
-            }
-            else{
-            // Recibimos la respuesta del servidor  
-            read_bytes = soc.Recv(descriptor, buffer, MESSAGE_SIZE);
-            }
-
-            
-
-        }
-
-    read_bytes = soc.Recv(descriptor, buffer, MESSAGE_SIZE);
-    r.from_string(buffer);
-};
-
+    while (taux != nullptr){
+        cout << taux->valor << endl;
+        taux = taux->sigComp;
+    }
 
 */
+    //hay_tupla.notify_all();
+
+}
+void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
+    unique_lock<mutex> lck(mtxMonitor);
+
+    cout << "////MONITOR BORRA" << endl; 
+    
+     bbdd::Nodo* fila = tupleSpace.primero;
+     bbdd::Nodo* columna = tupleSpace.primero;
+     bbdd::Nodo* aux = tupleSpace.primero;
+
+     bool encontrado = false;
+     bool sigue_buscando;
+     int i;
+
+     while (!encontrado && columna != nullptr){
+        sigue_buscando = true;
+        i = 1;
+        cout << "bucle de arriba" << endl;
+        while (sigue_buscando && fila != nullptr){
+            sigue_buscando = sonIguales(fila->valor, t.get(i));
+            cout << fila->valor << " == " << t.get(i) << endl;
+            cout << boolalpha << sigue_buscando << endl;
+
+            if (sigue_buscando){
+                r.set(i, fila->valor);
+                fila = fila->sigComp;
+                ++i;
+            }
+
+        }
+        if (fila == nullptr && sigue_buscando){
+            encontrado = true;
+            aux->sigTupla = columna ->sigTupla;
+
+            //BORRADO
+            
+
+            bbdd::Nodo* saux;
+            while (columna != nullptr){
+                saux = columna;
+                columna = columna->sigComp;
+                cout << "Se borra la componente: " 
+                << saux->valor << endl;
+                delete (saux);
+            }
+        }
+        else{
+            aux = columna;
+            columna = columna->sigTupla;
+            fila = columna;
+        }
+
+     }
+     if (!encontrado){
+        cout << "XXXX Tupla no encontrada XXXX" << endl;
+     }
+
+}
+void MonitorLinda::ReadNote(Tupla t, Tupla& r){
+    unique_lock<mutex> lck(mtxMonitor);
+
+    cout << "////MONITOR LEE" << endl; 
+    
+//    hay_tupla.wait(lck);
+
+     bbdd::Nodo* fila = tupleSpace.primero;
+     bbdd::Nodo* columna = tupleSpace.primero;
+     bool encontrado = false;
+     bool sigue_buscando;
+     int i;
+
+     while (!encontrado && columna != nullptr){
+        sigue_buscando = true;
+        i = 1;
+        cout << "bucle de arriba" << endl;
+        while (sigue_buscando && fila != nullptr){
+            sigue_buscando = sonIguales(fila->valor, t.get(i));
+            cout << fila->valor << " == " << t.get(i) << endl;
+            cout << boolalpha << sigue_buscando << endl;
+
+            if (sigue_buscando){
+                r.set(i, fila->valor);
+                fila = fila->sigComp;
+                ++i;
+            }
+
+        }
+        encontrado=(fila == nullptr && sigue_buscando);
+        
+        columna = columna->sigTupla;
+        fila = columna;
+     }
+     if (!encontrado){
+        cout << "XXXX Tupla no encontrada XXXX" << endl;
+     }
+
+}
