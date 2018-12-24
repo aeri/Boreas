@@ -134,6 +134,7 @@ Tupla LD::RN(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
+	cout << "vuelta:" << buffer << endl;
     Tupla r(tamanyo(buffer));
     r.from_string(buffer);
     return r;

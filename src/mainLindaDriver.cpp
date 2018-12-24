@@ -39,9 +39,10 @@ int main(int argc, char* argv[])
     LindaDriver.PN(t1);
     LindaDriver.PN(t2);
     Tupla ttp("?X", "mi casa", "árbol");
-    LindaDriver.RN(ttp);
-    LindaDriver.RN(ttp);
-    cout << "El cliente recibe: " << ttp.to_string() << endl;
+    
+    cout << "El cliente recibe: " << LindaDriver.RN(ttp).to_string() << endl;
+    
+    cout << "El cliente recibe: " << LindaDriver.RN(ttp).to_string() << endl;
     while (1);
     LindaDriver.PN(t2);
     LindaDriver.PN(t3);

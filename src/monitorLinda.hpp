@@ -36,27 +36,20 @@ class MonitorLinda
             Nodo* primero;
     };
 
-    bbdd tupleSpace;
+    bbdd tupleSpace1;
+    bbdd tupleSpace2;
+    bbdd tupleSpace3;
+    bbdd tupleSpace4;
+    bbdd tupleSpace5;
+    bbdd tupleSpace6;
 
     mutex mtxMonitor;  // FUNDAMENTAL: mutex usarán las funcs
 
-    condition_variable hay_tupla;
-
-    string ip1;
-    int p1;
-    string ip2;
-    int p2;
-    string ip3;
-    int p3;
-
-
-    /*
-    queue<int> coladim1;
-    queue<int> coladim2;
-    queue<int> coladim3;
-    queue<int> coladim4;
-    queue<int> coladim5;
-    queue<int> coladim6;
-    */
+    condition_variable hay_tupla1;
+    condition_variable hay_tupla2;
+    condition_variable hay_tupla3;
+    condition_variable hay_tupla4;
+    condition_variable hay_tupla5;
+    condition_variable hay_tupla6;
 };
 #endif
