@@ -58,22 +58,22 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			soc.Close(client_fd);
 		}
 
-		char* operacion = strtok (buffer,":");
-		char* tupla = strtok (NULL, ":");
-		int ssize = tamanyo(tupla);
-		Tupla t (ssize);
-		t.from_string(tupla);
-		cout << "Operacion recibida: " << operacion << endl;
-		cout << "Tupla recibida: " << tupla << endl;
 
-		string message;
 
 		// Si recibimos "END OF SERVICE" --> Fin de la comunicación
 		if (0 == strcmp(buffer, MENS_FIN)) {
 			out = true; // Salir del bucle
 		} else {
 			// Contamos las vocales recibidas en el mensaje anterior
-		
+			char* operacion = strtok (buffer,":");
+			char* tupla = strtok (NULL, ":");
+			int ssize = tamanyo(tupla);
+			Tupla t (ssize);
+			t.from_string(tupla);
+			cout << "Operacion recibida: " << operacion << endl;
+			cout << "Tupla recibida: " << tupla << endl;
+
+			string message;
 			
 			if (strcmp(operacion,"PN" )== 0){
 				ML.PostNote(t);
@@ -103,6 +103,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			}
 		}
 	}
+	cout << "Se cierra un thread de cliente" << endl;
 	soc.Close(client_fd);
 }
 //-------------------------------------------------------------
@@ -115,7 +116,7 @@ int main(int argc, char* argv[]) {
 	    cerr << "      <Port_LS>: puerto del servidor de almacenamiento" << endl;
 	    return 1;
 	}
-	const int N = 2;
+	const int N = 10;
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);
@@ -161,14 +162,10 @@ int main(int argc, char* argv[]) {
 		}
 
 		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
-		cliente[i] = thread(&servCliente, ref(socket), client_fd[i], ref(ML));
+		thread(&servCliente, ref(socket), client_fd[i], ref(ML)).detach();
 		cout << "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
 	}
 	
-	//¿Qué pasa si algún thread acaba inesperadamente?
-	for (int i=0; i<max_connections; i++) {
-		cliente[i].join();
-	}
 
     // Cerramos el socket del servidor
     error_code = socket.Close(socket_fd);

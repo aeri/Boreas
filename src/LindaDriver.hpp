@@ -18,6 +18,7 @@ class LD : public Socket
     void PN(Tupla t);
     Tupla RN(Tupla t);
     Tupla ReadN(Tupla t);
+    void STOP();
 };
 
 #endif

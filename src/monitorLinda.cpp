@@ -6,6 +6,7 @@
 using namespace std;
 
 const int MAX_ATTEMPS = 10;
+const int NUM_MATRIX = 6;
 
 //-----------------------------------------------------
 MonitorLinda::MonitorLinda()
@@ -20,20 +21,36 @@ MonitorLinda::MonitorLinda()
 
 MonitorLinda::~MonitorLinda(){
 
-};
-
 //----------------- Destructor
-/*
-void MonitorLinda::RemoveNote(Tupla t)
-{
-    unique_lock<mutex> lck(mtxMonitor);
+	bbdd::Nodo* aux;
+	for (int i = 1; i <= NUM_MATRIX; ++i){
+		switch (i){
+			case 1: aux=tupleSpace1.primero; break;
+			case 2: aux=tupleSpace2.primero; break;
+			case 3: aux=tupleSpace3.primero; break;
+			case 4: aux=tupleSpace4.primero; break;
+			case 5: aux=tupleSpace5.primero; break;
+			case 6: aux=tupleSpace6.primero; break;
+			default : 
+				aux = nullptr; 
+				cerr << "ERROR" << endl;
+		}
+		bbdd::Nodo* sig = aux ->sigComp;
+		bbdd::Nodo* del;
 
-    
-
-
-
+		while (aux != nullptr){
+			while (sig != nullptr){
+				del = sig -> sigComp;
+				delete (sig);
+				sig = del;		
+			}
+			del = aux -> sigTupla;
+			delete (aux);
+			aux = del;
+		}
+	}
 };
-*/
+
 
 bool sonIguales(string a, string b)
 {
@@ -148,35 +165,33 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 
     int dimension = t.size();
 
-    bbdd::Nodo* store;
     switch(dimension)
 	{
 	case 1:
-	    store = tupleSpace1.primero;
+	    fila = tupleSpace1.primero;
 	    break;
 	case 2:
-	    store = tupleSpace2.primero;
+	    fila = tupleSpace2.primero;
 	    break;
 	case 3:
-	    store = tupleSpace3.primero;
+	    fila = tupleSpace3.primero;
 	    break;
 	case 4:
-	    store = tupleSpace4.primero;
+	    fila = tupleSpace4.primero;
 	    break;
 	case 5:
-	    store = tupleSpace5.primero;
+	    fila = tupleSpace5.primero;
 	    break;
 	case 6:
-	    store = tupleSpace6.primero;
+	    fila = tupleSpace6.primero;
 	    break;
 	default:
-	    store = nullptr;
+	    fila = nullptr;
 	    cout << "Error en la dimensión de la tupla" << endl;
 	}
 
-    fila = tupleSpace3.primero;
-    columna = tupleSpace3.primero;
-    aux = tupleSpace3.primero;
+    columna = fila;
+    aux = fila;
 
     bool encontrado = false;
     bool sigue_buscando = true;
@@ -192,30 +207,35 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			{
 			case 1:
 			    hay_tupla1.wait(lck);
+			    fila = tupleSpace1.primero;
 			    break;
 			case 2:
 			    hay_tupla2.wait(lck);
+			    fila = tupleSpace2.primero;
 			    break;
 			case 3:
 			    cout << "WAIT TUPLA 3" << endl;
 			    hay_tupla3.wait(lck);
+			    fila = tupleSpace3.primero;
                 cout << "DESPERTADO TUPLA 3" << endl;
 			    break;
 			case 4:
 			    hay_tupla4.wait(lck);
+			    fila = tupleSpace4.primero;
 			    break;
 			case 5:
 			    hay_tupla5.wait(lck);
+			    fila = tupleSpace5.primero;
 			    break;
 			case 6:
 			    hay_tupla6.wait(lck);
+			    fila = tupleSpace6.primero;
 			    break;
 			default:
 			    cout << "Error en la dimensión de la tupla" << endl;
 			}
-		    fila = tupleSpace3.primero;
-		    columna = tupleSpace3.primero;
-		    aux = tupleSpace3.primero;
+		    columna = fila;
+		    aux = fila;
 		}
 	    // toda la mierda de abajo
 
@@ -272,37 +292,34 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
     bbdd::Nodo* fila;
     bbdd::Nodo* columna;
 
-    bbdd::Nodo* store;
-
     int dimension = t.size();
 
     switch(dimension)
 	{
 	case 1:
-	    store = tupleSpace1.primero;
+	    fila = tupleSpace1.primero;
 	    break;
 	case 2:
-	    store = tupleSpace2.primero;
+	    fila = tupleSpace2.primero;
 	    break;
 	case 3:
-	    store = tupleSpace3.primero;
+	    fila = tupleSpace3.primero;
 	    break;
 	case 4:
-	    store = tupleSpace4.primero;
+	    fila = tupleSpace4.primero;
 	    break;
 	case 5:
-	    store = tupleSpace5.primero;
+	    fila = tupleSpace5.primero;
 	    break;
 	case 6:
-	    store = tupleSpace6.primero;
+	    fila = tupleSpace6.primero;
 	    break;
 	default:
-	    store = nullptr;
+	    fila = nullptr;
 	    cout << "Error en la dimensión de la tupla" << endl;
 	}
 
-    fila = store;
-    columna = store;
+    columna = fila;
 
     bool encontrado = false;
     bool sigue_buscando;
@@ -316,27 +333,32 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 			{
 			case 1:
 			    hay_tupla1.wait(lck);
+			    fila = tupleSpace1.primero;
 			    break;
 			case 2:
 			    hay_tupla2.wait(lck);
+			    fila = tupleSpace2.primero;
 			    break;
 			case 3:
 			    hay_tupla3.wait(lck);
+			    fila = tupleSpace3.primero;
 			    break;
 			case 4:
 			    hay_tupla4.wait(lck);
+			    fila = tupleSpace4.primero;
 			    break;
 			case 5:
 			    hay_tupla5.wait(lck);
+			    fila = tupleSpace5.primero;
 			    break;
 			case 6:
 			    hay_tupla6.wait(lck);
+			    fila = tupleSpace6.primero;
 			    break;
 			default:
 			    cout << "Error en la dimensión de la tupla" << endl;
 			}
-		    fila = store;
-		    columna = store;
+		    columna = fila;
 		}
 
 	    while(!encontrado && columna != nullptr)

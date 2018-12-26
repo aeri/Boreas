@@ -6,11 +6,25 @@
 #include "Socket.hpp"
 #include "tuplas.hpp"
 
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+
+
 #include <mutex>
 
 bool STOP = false;
 const int N = 10;
 const int MAX_ATTEMPS = 10;
+const char MENS_FIN[] = "END OF SERVICE";
+
+
+void capturarSIGINT(int s){
+	cout << endl << "Señal " << s << " capturada." << endl;
+	STOP = true;
+}
 
 int tamanyo(string s)
 {
@@ -66,84 +80,45 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
     else
 	{
 	    cout << "Servidores conectados" << endl;
-	
 
-    // Buffer para recibir el mensaje
-    // char MENS_FIN[] = "END OF SERVICE";
-    // Buffer para recibir el mensaje
-    int length = 100;
-    char buffer[length];
+	    // Buffer para recibir el mensaje
+	    // char MENS_FIN[] = "END OF SERVICE";
+	    // Buffer para recibir el mensaje
+	    int length = 200;
+	    char buffer[length];
 
-    string operation;
+	    string operation;
 
-    string message;
+	    string message;
 
-    bool out = false;  // Inicialmente no salir del bucle
-    while(!out)
-	{
-	    // Recibimos la operación que el cliente desea realizar
-	    int rcv_bytes = soc.Recv(client_fd, operation, length);
-	    if(rcv_bytes == -1)
+	    bool out = false;  // Inicialmente no salir del bucle
+
+	    int descriptor;
+
+	    Socket serverX = server1;
+
+	    while(!out)
 		{
-		    string mensError(strerror(errno));
-		    cerr << "Error al recibir datos: " + mensError + "\n";
-		    // Cerramos los sockets
-		    soc.Close(client_fd);
-		}
-
-	    cout << "Mensaje recibido: " << operation << endl;
-	    // Contestamos al cliente que su petición está dispuesta a ser procesada
-	    int send_bytes = soc.Send(client_fd, "OK");
-
-	    if(send_bytes == -1)
-		{
-		    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-		    // Cerramos el socket
-		    soc.Close(client_fd);
-		}
-
-	    // Recibimos la operación que el cliente desea realizar
-	    rcv_bytes = soc.Recv(client_fd, buffer, length);
-	    if(rcv_bytes == -1)
-		{
-		    string mensError(strerror(errno));
-		    cerr << "Error al recibir datos: " + mensError + "\n";
-		    // Cerramos los sockets
-		    soc.Close(client_fd);
-		}
-
-	    cout << "Tupla: " << buffer << endl;
-	    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
-	    int ssize = tamanyo(buffer);
-	    message = operation + ":" + buffer;
-	    cout << "Mensaje a enviar: " << message << endl;
-
-
-	    if (ssize <= 3){
-		    cout << "<=3" << endl;
-		    if(operation == "PN")
+		    // Recibimos la operación que el cliente desea realizar
+		    int rcv_bytes = soc.Recv(client_fd, operation, length);
+		    if(rcv_bytes == -1)
 			{
-				cout << "####POST NOTE####" << endl;
-			    int send_bytes = server1.Send(socket_s1, message);
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    server1.Close(socket_s1);
-				}
-				else{
-					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
-				}
-			    int read_bytes = server1.Recv(socket_s1, buffer, strlen(buffer));
-			    if(read_bytes == -1)
-				{
-				    string mensError(strerror(errno));
-				    cerr << "Error al recibir datos: " + mensError + "\n";
-				    // Cerramos los sockets
-				    server1.Close(socket_s1);
-				}
-			    send_bytes = soc.Send(client_fd, "OK");
-			    cout << "             FIN PN" << endl;
+			    string mensError(strerror(errno));
+			    cerr << "Error al recibir datos: " + mensError + "\n";
+			    // Cerramos los sockets
+			    soc.Close(client_fd);
+			}
+
+		    cout << "Mensaje recibido: " << operation << endl;
+
+		    if(operation == MENS_FIN)
+			{
+			    out = true;  // Salir del bucle
+			}
+		    else
+			{
+			    // Contestamos al cliente que su petición está dispuesta a ser procesada
+			    int send_bytes = soc.Send(client_fd, "OK");
 
 			    if(send_bytes == -1)
 				{
@@ -151,62 +126,66 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    // Cerramos el socket
 				    soc.Close(client_fd);
 				}
-			}
 
-			else if(operation == "ReadN")
-			{
-				cout << "####READ NOTE####" << endl;
-			    int send_bytes = server1.Send(socket_s1, message);
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    server1.Close(socket_s1);
-				}
-				else{
-					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
-				}
-			    int read_bytes = server1.Recv(socket_s1, buffer, strlen(buffer));
-			    if(read_bytes == -1)
+			    // Recibimos la operación que el cliente desea realizar
+			    rcv_bytes = soc.Recv(client_fd, buffer, length);
+			    if(rcv_bytes == -1)
 				{
 				    string mensError(strerror(errno));
 				    cerr << "Error al recibir datos: " + mensError + "\n";
 				    // Cerramos los sockets
-				    server1.Close(socket_s1);
-				}
-			    send_bytes = soc.Send(client_fd, "OK");
-			    cout << "             FIN ReadN" << endl;
-
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
 				    soc.Close(client_fd);
 				}
-			}
-			else
+
+			    cout << "Tupla: " << buffer << endl;
+			    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
+			    int ssize = tamanyo(buffer);
+			    message = operation + ":" + buffer;
+			    cout << "Mensaje a enviar: " << message << endl;
+
+			    if(ssize <= 3)
 				{
-				cout << "####REMOVE NOTE####" << endl;
-			    int send_bytes = server1.Send(socket_s1, message);
+				    serverX = server1;
+				    descriptor = socket_s1;
+				}
+			    else if(ssize > 3 && ssize < 6)
+				{
+				    serverX = server2;
+				    descriptor = socket_s2;
+				}
+			    else if(ssize == 6)
+				{
+				    serverX = server3;
+				    descriptor = socket_s3;
+				}
+			    else
+				{
+				    descriptor = -1;
+				    cerr << "Algo va mal" << endl;
+				}
+
+			    // Elegido servidor
+			    send_bytes = serverX.Send(descriptor, message);
 			    if(send_bytes == -1)
 				{
 				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
 				    // Cerramos el socket
-				    server1.Close(socket_s1);
+				    serverX.Close(descriptor);
 				}
-				else{
-					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
+			    else
+				{
+				    cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
 				}
-			    int read_bytes = server1.Recv(socket_s1, buffer, strlen(buffer));
+			    int read_bytes = serverX.Recv(descriptor, buffer, length);
+			    cout << "####" << buffer << "####" << endl;
 			    if(read_bytes == -1)
 				{
 				    string mensError(strerror(errno));
 				    cerr << "Error al recibir datos: " + mensError + "\n";
 				    // Cerramos los sockets
-				    server1.Close(socket_s1);
+				    serverX.Close(descriptor);
 				}
 			    send_bytes = soc.Send(client_fd, buffer);
-			    cout << "             FIN RN" << endl;
 
 			    if(send_bytes == -1)
 				{
@@ -215,81 +194,34 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    soc.Close(client_fd);
 				}
 			}
-		}
-		else if (ssize >3 && ssize <6){
-		    cout << "4||5" << endl;
-		    if(operation == "PN")
-			{
-			    int send_bytes = server2.Send(socket_s2, message);
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    server2.Close(socket_s2);
-				}
-				else{
-					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
-				}
-			    int read_bytes = server2.Recv(socket_s2, buffer, strlen(buffer));
-			    if(read_bytes == -1)
-				{
-				    string mensError(strerror(errno));
-				    cerr << "Error al recibir datos: " + mensError + "\n";
-				    // Cerramos los sockets
-				    server1.Close(socket_s1);
-				}
-			    send_bytes = soc.Send(client_fd, "OK");
-			    cout << "             FIN PN" << endl;
-
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    soc.Close(client_fd);
-				}
-			}
-		}
-		else{
-		    cout << "6" << endl;
-		    if(operation == "PN")
-			{
-			    int send_bytes = server3.Send(socket_s3, message);
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    server3.Close(socket_s3);
-				}
-				else{
-					cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
-				}
-			    int read_bytes = server3.Recv(socket_s3, buffer, strlen(buffer));
-			    if(read_bytes == -1)
-				{
-				    string mensError(strerror(errno));
-				    cerr << "Error al recibir datos: " + mensError + "\n";
-				    // Cerramos los sockets
-				    server1.Close(socket_s1);
-				}
-			    send_bytes = soc.Send(client_fd, "OK");
-			    cout << "             FIN PN" << endl;
-
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    soc.Close(client_fd);
-				}
-			}
-
 		}
 	}
-}
+	cout << "Cerrado un servicio" << endl;
+    server1.Send(socket_s1, MENS_FIN);
+    server2.Send(socket_s2, MENS_FIN);
+    server3.Send(socket_s3, MENS_FIN);
+
+    int error_code1 = server1.Close(socket_s1);
+    int error_code2 = server2.Close(socket_s2);
+    int error_code3 = server3.Close(socket_s3);
+    if(error_code1 == -1 || error_code2 == -1 || error_code3 == -1)
+	{
+	    cerr << "Error cerrando el socket: " << strerror(errno) << endl;
+	}
+
     soc.Close(client_fd);
 }
 
 int main(int argc, char* argv[])
 {
+
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = capturarSIGINT;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+
     if(argc < 8)
 	{
 	    cerr << "Invocar como:" << endl;

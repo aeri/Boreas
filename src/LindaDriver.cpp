@@ -185,8 +185,14 @@ Tupla LD::ReadN(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
+	cout << "vuelta:" << buffer << endl;
     Tupla r(tamanyo(buffer));
-    cout << "BASURA" << endl;
     r.from_string(buffer);
     return r;
+};
+
+void LD::STOP()
+{
+    Send(socket_fd, "END OF SERVICE");
+    Close(socket_fd);
 };
