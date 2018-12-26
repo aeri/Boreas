@@ -163,7 +163,9 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
     bbdd::Nodo* columna;
     bbdd::Nodo* aux;
 
-    int dimension = t.size();
+    bbdd::Nodo* pr;
+
+    const int dimension = t.size();
 
     switch(dimension)
 	{
@@ -192,6 +194,15 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 
     columna = fila;
     aux = fila;
+    pr = fila;
+
+    if (fila == nullptr){
+	   	cout << "[nullptr]" << endl;
+	}
+	else{
+		cout << "[notnull]" << endl;
+		cout << fila->valor << endl;
+	}
 
     bool encontrado = false;
     bool sigue_buscando = true;
@@ -236,6 +247,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			}
 		    columna = fila;
 		    aux = fila;
+		    pr = fila;
 		}
 	    // toda la mierda de abajo
 
@@ -244,6 +256,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 		    sigue_buscando = true;
 		    i = 1;
 		    cout << "bucle de arriba" << endl;
+		    
 		    while(sigue_buscando && fila != nullptr)
 			{
 			    sigue_buscando = sonIguales(fila->valor, t.get(i));
@@ -264,6 +277,33 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			    aux->sigTupla = columna->sigTupla;
 
 			    // BORRADO
+
+			    if (columna == pr){
+			    	cout << "Solo hay una tupla!" << endl;
+			    	switch(dimension)
+					{
+					case 1:
+						tupleSpace1.primero = nullptr;
+					    break;
+					case 2:
+						tupleSpace2.primero = nullptr;
+					    break;
+					case 3:
+						tupleSpace3.primero = nullptr;
+					    break;
+					case 4:
+						tupleSpace4.primero = nullptr;
+					    break;
+					case 5:
+						tupleSpace5.primero = nullptr;
+					    break;
+					case 6:
+						tupleSpace6.primero = nullptr;
+					    break;
+					default:
+					    cout << "Error en la dimensión de la tupla" << endl;
+					}
+			    }
 			    bbdd::Nodo* saux;
 			    while(columna != nullptr)
 				{
@@ -271,6 +311,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 				    columna = columna->sigComp;
 				    cout << "Se borra la componente: " << saux->valor << endl;
 				    delete(saux);
+				    saux = nullptr;
 				}
 			}
 		    else
@@ -366,6 +407,9 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 		    sigue_buscando = true;
 		    i = 1;
 		    cout << "bucle de arriba" << endl;
+		    if (fila == nullptr){
+		    	cout << "[nullptr]" << endl;
+		    }
 		    while(sigue_buscando && fila != nullptr)
 			{
 			    sigue_buscando = sonIguales(fila->valor, t.get(i));
