@@ -8,7 +8,9 @@
 #include "tuplas.hpp"
 
 using namespace std;
-
+/*Pre:s es un string que representa una tupla cuyas componentes están sepradas por comas
+ *Post:Devuelve el número de componentes separadas por comas que hay en s
+ */
 int tamanyo(string s)
 {
     stringstream ss(s);
@@ -22,6 +24,10 @@ int tamanyo(string s)
 	}
     return dimension;
 }
+
+/*Pre:ip es una direccion ip valida y p es un puerto válido
+ *Post:Constructor de la clase LD
+ */
 
 LD::LD(string ip, string p) : Socket(ip, stoi(p))
 {
@@ -48,6 +54,11 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
 	    cout << "Error Grave" << endl;
 	}
 };
+
+
+/*Pre:la dimension de t es >=1 && <=6
+ *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar PostNote 
+ */
 
 void LD::PN(Tupla t)
 {
@@ -78,6 +89,12 @@ void LD::PN(Tupla t)
 		cerr << "ERROR" << endl;
 	}
 };
+
+
+/*Pre:la dimension de t es >=1 && <=6
+ *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar RemoveNote y la devuelve 
+ */
+
 
 Tupla LD::RN(Tupla t)
 {
@@ -112,6 +129,11 @@ Tupla LD::RN(Tupla t)
     return r;
 };
 
+
+/*Pre:la dimension de t es >=1 && <=6
+ *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
+ */
+
 Tupla LD::ReadN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
@@ -144,6 +166,10 @@ Tupla LD::ReadN(Tupla t)
     r.from_string(buffer);
     return r;
 };
+
+/*Pre:
+ *Post:Cierra la conexión con el cliente
+ */
 
 void LD::STOP()
 {
