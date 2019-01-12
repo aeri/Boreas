@@ -9,6 +9,11 @@ const int MAX_ATTEMPS = 10;
 const int NUM_MATRIX = 6;
 
 //-----------------------------------------------------
+
+/*Pre:
+ *Post:Constructor de la clase monitorLinda
+ */
+
 MonitorLinda::MonitorLinda()
 {
     tupleSpace1.primero = nullptr;
@@ -18,6 +23,11 @@ MonitorLinda::MonitorLinda()
     tupleSpace5.primero = nullptr;
     tupleSpace6.primero = nullptr;
 };
+
+
+/*Pre:
+ *Post:Destructor de la clase monitorLinda
+ */
 
 MonitorLinda::~MonitorLinda(){
 
@@ -52,7 +62,14 @@ MonitorLinda::~MonitorLinda(){
 };
 
 
-bool sonIguales(string a, string b)
+
+/*Pre: a y b son dos strings que respetan el formato de las tuplas ["",""]
+ *Post:Devuelve true si a y b tienen las mismas componentes, teninedo en cuenta
+ *    que una componente ?x coincide con cualquier valor
+ */
+    bool sonIguales(string a, string b)
+ 
+
 {
     if(b[0] == '?' && b[1] >= 'A' && b[1] <= 'Z')
 	{
@@ -64,6 +81,12 @@ bool sonIguales(string a, string b)
 	}
 }
 
+
+
+
+/*Pre:la dimensión de la tupla t es >=1 && <=6
+ *Post:Añade a la matriz correspondiente la tupla t
+ */
 void MonitorLinda::PostNote(Tupla t)
 {
     unique_lock<mutex> lck(mtxMonitor);
@@ -122,12 +145,10 @@ void MonitorLinda::PostNote(Tupla t)
 
     /*
         bbdd::Nodo* taux = tupleSpace.primero;
-
         while (taux != nullptr){
             cout << taux->valor << endl;
             taux = taux->sigComp;
         }
-
     */
     switch(dimension)
 	{
@@ -153,6 +174,12 @@ void MonitorLinda::PostNote(Tupla t)
 	    cerr << "Error en la dimensión de la tupla" << endl;
 	}
 }
+
+/*Pre:la dimensión de la tupla t es >=1 && <=6
+ *Post:Busca la tupla t en la matriz correspondiente,la elimina y actualiza el valor de dicha tupla
+ */
+
+
 void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 {
     unique_lock<mutex> lck(mtxMonitor);
@@ -319,6 +346,11 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 	}
     heBuscado = true;
 }
+
+/*Pre:la dimensión de la tupla t es >=1 && <=6
+ *Post:Busca la tupla t en la matriz correspondiente y actualiza el valor de dicha tupla
+ */
+
 void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 {
     unique_lock<mutex> lck(mtxMonitor);
