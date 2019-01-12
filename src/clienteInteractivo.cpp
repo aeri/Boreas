@@ -10,6 +10,8 @@
 #include "LindaDriver.hpp"
 #include "tuplas.hpp"
 
+#include <chrono>
+
 using namespace std;
 
 //-----------------------------------------------------
@@ -59,23 +61,41 @@ int main(int argc, char* argv[])
 			    cin >> componente;
 			    tta.set(i, componente);
 			    ++i;
-			}
+			} 
 
 		    if(operacion == 1)
 			{
 			    cout << "Se realiza PostNote de " << tta.to_string() << endl;
+			    auto init = std::chrono::system_clock::now();
 			    LindaDriver.PN(tta);
+			    auto end = std::chrono::system_clock::now();
+			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+				
+				cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
 			}
 		    else if(operacion == 2)
 			{
 			    cout << "Se realiza RemoveNote de " << tta.to_string() << endl;
+			    auto init = std::chrono::system_clock::now();
 			    cout << "Se devuelve: " << LindaDriver.RN(tta).to_string() << endl;
+			    auto end = std::chrono::system_clock::now();
+			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+				
+				cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
 			}
 		    else if(operacion == 3)
 			{
 			    cout << "Se realiza ReadNote de " << tta.to_string() << endl;
+			    auto init = std::chrono::system_clock::now();
 			    cout << "Se devuelve: " << LindaDriver.ReadN(tta).to_string() << endl;
+			    auto end = std::chrono::system_clock::now();
+			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+				
+				cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
 			}
+
+			
+			
 		}
 	    else
 		{

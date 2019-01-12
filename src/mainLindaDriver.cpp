@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     cout << "Conexión establecida con éxito" << endl;
     // Varias formas de construir tuplas
     Tupla t1("1", "mi casa", "árbol");  // 3 elementos
-    Tupla t2("1000", "mi vida", "moodle");
+    Tupla t2("1000");
     Tupla t3("aprieta", "el", "pan", "45", "34", "88");
     Tupla t4("aprieta", "fuerte", "pan", "tt", "34", "pan");
     // insertar las tuplas en linda: varios PostNote
@@ -41,10 +41,9 @@ int main(int argc, char* argv[])
     LindaDriver.PN(t2);
     Tupla ttp("?X", "mi casa", "árbol");
     
-    cout << "El cliente recibe: " << LindaDriver.RN(ttp).to_string() << endl;
     
-    cout << "El cliente recibe: " << LindaDriver.RN(ttp).to_string() << endl;
-    while (1);
+    cout << "El cliente recibe: " << LindaDriver.ReadN(ttp).to_string() << endl;
+    
     LindaDriver.PN(t2);
     LindaDriver.PN(t3);
     LindaDriver.PN(t3);
@@ -61,6 +60,7 @@ int main(int argc, char* argv[])
     t3.from_string("[a,b,c,45,34,pan]");
     // mostrará [a,b,c,45,34,pan] por stdout
     cout << t3.to_string() << endl;
+    LindaDriver.PN(t3);
 
     // Crea una tupla de 3 elementos "".
     // Equivalente a Tupla t5("","","")
@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
 
     delete v[0];
     delete v[1];
+
+    LindaDriver.STOP();
 
     return 0;
 }

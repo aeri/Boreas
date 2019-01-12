@@ -52,15 +52,18 @@ int main(int argc, char* argv[])
     double tiempo_ReadN = 0.0;
     double tiempo_poblado = 0.0;
 
+    string purria;
+
     for (int i = 0; i < atoi(argv[3]); ++i){
         
         entrada =start+to_string(i)+stop;
         ttp.from_string(entrada);
-
+        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
         auto init = std::chrono::system_clock::now(); 
         LindaDriver.PN(ttp);
-        auto end = std::chrono::system_clock::now(); 
+        auto end = std::chrono::system_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+		cout << "Tupla " << i << " en " << elapsed.count() << endl;
 		tiempo_poblado += elapsed.count();
 
         cout << "PN realizado de tupla: " << ttp.to_string() << endl;
@@ -114,12 +117,13 @@ int main(int argc, char* argv[])
     }
 
     cout << "Insertadas " << argv[3] << endl;
-	LindaDriver.STOP();
+	
 
 	cout << "tiempo_poblado END " << tiempo_poblado/atoi(argv[3]) << endl;
 	cout << "tiempo_PN END " << tiempo_PN/INTENTOS << endl;
 	cout << "tiempo_ReadN END " << tiempo_ReadN/INTENTOS << endl;
 	cout << "tiempo_RN END " << tiempo_RN/INTENTOS << endl;
-   
+	
+    LindaDriver.STOP();
     return 0;
 }
