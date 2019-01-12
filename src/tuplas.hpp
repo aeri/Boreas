@@ -31,8 +31,10 @@ class Tupla
    public:
     // Colección de funciones de la clase especificadas en 
     // el fichero de implementación del módulo tuplas
-    Tupla(string p1);
-    Tupla(string p1, string p2);
+   
+    // Constructores de tuplas de uno a seis parámetros respectivamente
+    Tupla(string p1);               
+    Tupla(string p1, string p2);    
     Tupla(string p1, string p2, string p3);
     Tupla(string p1, string p2, string p3, string p4);
     Tupla(string p1, string p2, string p3, string p4, string p5);
