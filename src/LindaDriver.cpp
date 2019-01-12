@@ -1,3 +1,15 @@
+/*
+ * ----------------------------------------------------------
+ * -- Programación de sistemas concurrentes y distribuidos --
+ * -- Trabajo práctico : Servidor Linda ---------------------
+ * -- Autores y NIP -----------------------------------------
+ * -- Daniel Naval Alcalá  739274 ---------------------------
+ * -- Alejandro Omist Casado 737791 -------------------------
+ * -- Rubén Rodríguez Esteban 737215 ------------------------
+ * -- José Manuel Romero Clavería 74 ------------------------
+ * ----------------------------------------------------------
+ */
+
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -8,8 +20,10 @@
 #include "tuplas.hpp"
 
 using namespace std;
-/*Pre:s es un string que representa una tupla cuyas componentes están sepradas por comas
- *Post:Devuelve el número de componentes separadas por comas que hay en s
+
+/*
+ * Pre: <<s>> es un string que representa una tupla cuyas componentes están sepradas por comas
+ * Post: Devuelve el número de componentes separadas por comas que hay en <<s>>
  */
 int tamanyo(string s)
 {
@@ -25,8 +39,9 @@ int tamanyo(string s)
     return dimension;
 }
 
-/*Pre:ip es una direccion ip valida y p es un puerto válido
- *Post:Constructor de la clase LD
+/*
+ * Pre: <<ip>> es una direccion ip valida y <<p>> es un puerto válido
+ * Post: Constructor de la clase LD
  */
 
 LD::LD(string ip, string p) : Socket(ip, stoi(p))
@@ -56,10 +71,10 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
 };
 
 
-/*Pre:la dimension de t es >=1 && <=6
- *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar PostNote 
+/*
+ * Pre:la dimension de <<t>> es >=1 && <=6
+ * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar PostNote 
  */
-
 void LD::PN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
@@ -91,11 +106,10 @@ void LD::PN(Tupla t)
 };
 
 
-/*Pre:la dimension de t es >=1 && <=6
- *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar RemoveNote y la devuelve 
+/*
+ * Pre:la dimension de <<t>> es >=1 && <=6
+ * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar RemoveNote y la devuelve 
  */
-
-
 Tupla LD::RN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
@@ -130,10 +144,10 @@ Tupla LD::RN(Tupla t)
 };
 
 
-/*Pre:la dimension de t es >=1 && <=6
- *Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
+/*
+ * Pre:la dimension de <<t>> es >=1 && <=6
+ * Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
  */
-
 Tupla LD::ReadN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
@@ -167,10 +181,10 @@ Tupla LD::ReadN(Tupla t)
     return r;
 };
 
-/*Pre:
- *Post:Cierra la conexión con el cliente
+/*
+ * Pre: ---
+ * Post:Cierra la conexión con el cliente enviando mensaje END OF SERVICE
  */
-
 void LD::STOP()
 {
     Send(socket_fd, "END OF SERVICE");
