@@ -1,0 +1,21 @@
+Insertadas 10000
+tiempo_poblado END 87.4318
+tiempo_PN END 87.52
+tiempo_ReadN END 87.94
+tiempo_RN END 87.69
+
+Insertadas 1000
+tiempo_poblado END 87.383
+tiempo_PN END 87.4
+tiempo_ReadN END 87.56
+tiempo_RN END 87.47
+
+
+Insertadas 100
+tiempo_poblado END 86.59
+tiempo_PN END 87.51
+tiempo_ReadN END 87.5
+tiempo_RN END 87.5
+
+
+

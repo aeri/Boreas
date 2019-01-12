@@ -67,12 +67,12 @@ bool sonIguales(string a, string b)
 void MonitorLinda::PostNote(Tupla t)
 {
     unique_lock<mutex> lck(mtxMonitor);
-    cout << "////MONITOR ESCRIBE" << endl;
+    //cout << "////MONITOR ESCRIBE" << endl;
 
     bbdd::Nodo* np = new bbdd::Nodo;
 
     int dimension = t.size();
-    cout << "DIMENSION: " << dimension << endl;
+    //cout << "DIMENSION: " << dimension << endl;
     switch(dimension)
 	{
 	case 1:
@@ -100,16 +100,16 @@ void MonitorLinda::PostNote(Tupla t)
 	    tupleSpace6.primero = np;
 	    break;
 	default:
-	    cout << "Error en la dimensión de la tupla" << endl;
+	    cerr << "Error en la dimensión de la tupla" << endl;
 	}
 
     for(int i = 1; i <= dimension; ++i)
 	{
 	    np->valor = t.get(i);
-	    cout << np->valor << endl;
+	    
 	    if(i != dimension)
 		{
-		    cout << "new!" << endl;
+		    //cout << "new!" << endl;
 		    np->sigComp = new bbdd::Nodo;
 		    np = np->sigComp;
 		}
@@ -118,7 +118,7 @@ void MonitorLinda::PostNote(Tupla t)
 		    np->sigComp = nullptr;
 		}
 	}
-    cout << "////MONITOR ESCRIBE ACABA" << endl;
+    //cout << "////MONITOR ESCRIBE ACABA" << endl;
 
     /*
         bbdd::Nodo* taux = tupleSpace.primero;
@@ -150,14 +150,14 @@ void MonitorLinda::PostNote(Tupla t)
 	    hay_tupla6.notify_all();
 	    break;
 	default:
-	    cout << "Error en la dimensión de la tupla" << endl;
+	    cerr << "Error en la dimensión de la tupla" << endl;
 	}
 }
 void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 {
     unique_lock<mutex> lck(mtxMonitor);
 
-    cout << "////MONITOR BORRA" << endl;
+    //cout << "////MONITOR BORRA" << endl;
 
     bbdd::Nodo* fila;
     bbdd::Nodo* columna;
@@ -189,20 +189,13 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 	    break;
 	default:
 	    fila = nullptr;
-	    cout << "Error en la dimensión de la tupla" << endl;
+	    cerr << "Error en la dimensión de la tupla" << endl;
 	}
 
     columna = fila;
     aux = fila;
     pr = fila;
 
-    if (fila == nullptr){
-	   	cout << "[nullptr]" << endl;
-	}
-	else{
-		cout << "[notnull]" << endl;
-		cout << fila->valor << endl;
-	}
 
     bool encontrado = false;
     bool sigue_buscando = true;
@@ -213,7 +206,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 	{
 	    while(heBuscado || columna == nullptr)
 		{
-            cout << "XXXX Tupla no encontrada XXXX" << endl;
+            cerr << "XXXX Tupla no encontrada XXXX" << endl;
 		    switch(dimension)
 			{
 			case 1:
@@ -225,10 +218,8 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			    fila = tupleSpace2.primero;
 			    break;
 			case 3:
-			    cout << "WAIT TUPLA 3" << endl;
 			    hay_tupla3.wait(lck);
 			    fila = tupleSpace3.primero;
-                cout << "DESPERTADO TUPLA 3" << endl;
 			    break;
 			case 4:
 			    hay_tupla4.wait(lck);
@@ -243,30 +234,29 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			    fila = tupleSpace6.primero;
 			    break;
 			default:
-			    cout << "Error en la dimensión de la tupla" << endl;
+			    cerr << "Error en la dimensión de la tupla" << endl;
 			}
 		    columna = fila;
 		    aux = fila;
 		    pr = fila;
 		}
-	    // toda la mierda de abajo
 
 	    while(!encontrado && columna != nullptr)
 		{
 		    sigue_buscando = true;
 		    i = 1;
-		    cout << "bucle de arriba" << endl;
 		    
+		    //Bucle de búsqueda de tupla
 		    while(sigue_buscando && fila != nullptr)
 			{
 			    sigue_buscando = sonIguales(fila->valor, t.get(i));
-			    cout << fila->valor << " == " << t.get(i) << endl;
-			    cout << boolalpha << sigue_buscando << endl;
+			    //cout << fila->valor << " == " << t.get(i) << endl;
+			    //cout << boolalpha << sigue_buscando << endl;
 
 			    if(sigue_buscando)
 				{
 				    r.set(i, fila->valor);
-                    cout << fila->valor << endl;
+                    //cout << fila->valor << endl;
 				    fila = fila->sigComp;
 				    ++i;
 				}
@@ -276,40 +266,45 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r)
 			    encontrado = true;
 			    aux->sigTupla = columna->sigTupla;
 
-			    // BORRADO
+			    /* Se comienza el borrado de elementos
+			    	- Si el elemento a borrar el primero hay que tener en cuenta
+			    		que el puntero a primero tendrá que actualizarse por
+			    		el valor que tenga el puntero al siguiente que apunta
+			    */
 
 			    if (columna == pr){
-			    	cout << "Solo hay una tupla!" << endl;
+			    	cout << "Borrando primer elemento" << endl;
 			    	switch(dimension)
 					{
 					case 1:
-						tupleSpace1.primero = nullptr;
+						tupleSpace1.primero = columna->sigTupla;
 					    break;
 					case 2:
-						tupleSpace2.primero = nullptr;
+						tupleSpace2.primero = columna->sigTupla;
 					    break;
 					case 3:
-						tupleSpace3.primero = nullptr;
+						tupleSpace3.primero = columna->sigTupla;
 					    break;
 					case 4:
-						tupleSpace4.primero = nullptr;
+						tupleSpace4.primero = columna->sigTupla;
 					    break;
 					case 5:
-						tupleSpace5.primero = nullptr;
+						tupleSpace5.primero = columna->sigTupla;
 					    break;
 					case 6:
-						tupleSpace6.primero = nullptr;
+						tupleSpace6.primero = columna->sigTupla;
 					    break;
 					default:
-					    cout << "Error en la dimensión de la tupla" << endl;
+					    cerr << "Error en la dimensión de la tupla" << endl;
 					}
+
 			    }
 			    bbdd::Nodo* saux;
 			    while(columna != nullptr)
 				{
 				    saux = columna;
 				    columna = columna->sigComp;
-				    cout << "Se borra la componente: " << saux->valor << endl;
+				    //cout << "Se borra la componente: " << saux->valor << endl;
 				    delete(saux);
 				    saux = nullptr;
 				}
@@ -328,7 +323,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 {
     unique_lock<mutex> lck(mtxMonitor);
 
-    cout << "////MONITOR LEE" << endl;
+    //cout << "////MONITOR LEE" << endl;
 
     bbdd::Nodo* fila;
     bbdd::Nodo* columna;
@@ -357,7 +352,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 	    break;
 	default:
 	    fila = nullptr;
-	    cout << "Error en la dimensión de la tupla" << endl;
+	    cerr << "Error en la dimensión de la tupla" << endl;
 	}
 
     columna = fila;
@@ -397,7 +392,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 			    fila = tupleSpace6.primero;
 			    break;
 			default:
-			    cout << "Error en la dimensión de la tupla" << endl;
+			    cerr << "Error en la dimensión de la tupla" << endl;
 			}
 		    columna = fila;
 		}
@@ -406,15 +401,17 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 		{
 		    sigue_buscando = true;
 		    i = 1;
+		    /*
 		    cout << "bucle de arriba" << endl;
 		    if (fila == nullptr){
 		    	cout << "[nullptr]" << endl;
 		    }
+		    */
 		    while(sigue_buscando && fila != nullptr)
 			{
 			    sigue_buscando = sonIguales(fila->valor, t.get(i));
-			    cout << fila->valor << " == " << t.get(i) << endl;
-			    cout << boolalpha << sigue_buscando << endl;
+			    /*cout << fila->valor << " == " << t.get(i) << endl;
+			    cout << boolalpha << sigue_buscando << endl;*/
 
 			    if(sigue_buscando)
 				{
@@ -430,7 +427,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r)
 		}
 	    if(!encontrado)
 		{
-		    cout << "XXXX Tupla no encontrada XXXX" << endl;
+		    cerr << "XXXX Tupla no encontrada XXXX" << endl;
 		}
 	}
 }

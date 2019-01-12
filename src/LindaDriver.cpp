@@ -52,7 +52,12 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
 void LD::PN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
-    int send_bytes = Send(socket_fd, "PN");
+
+    string message = "PN:" + t.to_string();
+
+    int send_bytes = Send(socket_fd, message);
+
+
     if(send_bytes == -1)
 	{
 	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
@@ -63,36 +68,25 @@ void LD::PN(Tupla t)
     cout << "Enviado PN" << endl;
     // Buffer para almacenar la respuesta, como char[]
     string buffer;
-    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
-    if(read_bytes == -1)
-	{
-	    string mensError(strerror(errno));
-	    cerr << "Error al recibir datos: " + mensError + "\n";
-	    // Cerramos los sockets
-	    Close(socket_fd);
+	int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+	if (read_bytes > 0){
+		cout << "\033[1;41m" << buffer << "\033[0m\n";
 	}
-    
-    if(buffer == "OK")
-	{
-	    cout << "Enviando Tupla..." << endl;
-	    int send_bytes = Send(socket_fd, t.to_string());
-	    if(send_bytes == -1)
-		{
-		    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-		    // Cerramos el socket
-		    Close(socket_fd);
-		    exit(1);
-		}
+	else{
+		cerr << "ERROR" << endl;
 	}
-	read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
-	cout << "\033[1;41m" << buffer << "\033[0m\n";
 };
 
 Tupla LD::RN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
-    int send_bytes = Send(socket_fd, "RN");
+
+    string message = "RN:" + t.to_string();
+
+    int send_bytes = Send(socket_fd, message);
+
     if(send_bytes == -1)
 	{
 	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
@@ -104,28 +98,6 @@ Tupla LD::RN(Tupla t)
     // Buffer para almacenar la respuesta, como char[]
     string buffer;
     int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
-
-    if(read_bytes == -1)
-	{
-	    string mensError(strerror(errno));
-	    cerr << "Error al recibir datos: " + mensError + "\n";
-	    // Cerramos los sockets
-	    Close(socket_fd);
-	}
-
-    if(buffer == "OK")
-	{
-	    send_bytes = Send(socket_fd, t.to_string());
-	    if(send_bytes == -1)
-		{
-		    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-		    // Cerramos el socket
-		    Close(socket_fd);
-		    exit(1);
-		}
-	}
-
-    read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
     if(read_bytes == -1)
 	{
@@ -143,7 +115,11 @@ Tupla LD::RN(Tupla t)
 Tupla LD::ReadN(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
-    int send_bytes = Send(socket_fd, "ReadN");
+
+    string message = "ReadN:" + t.to_string();
+
+    int send_bytes = Send(socket_fd, message);
+
     if(send_bytes == -1)
 	{
 	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
@@ -155,28 +131,6 @@ Tupla LD::ReadN(Tupla t)
     // Buffer para almacenar la respuesta, como char[]
     string buffer;
     int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
-
-    if(read_bytes == -1)
-	{
-	    string mensError(strerror(errno));
-	    cerr << "Error al recibir datos: " + mensError + "\n";
-	    // Cerramos los sockets
-	    Close(socket_fd);
-	}
-
-    if(buffer == "OK")
-	{
-	    send_bytes = Send(socket_fd, t.to_string());
-	    if(send_bytes == -1)
-		{
-		    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-		    // Cerramos el socket
-		    Close(socket_fd);
-		    exit(1);
-		}
-	}
-    // Buffer para almacenar la respuesta, como char[]
-    read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
     if(read_bytes == -1)
 	{

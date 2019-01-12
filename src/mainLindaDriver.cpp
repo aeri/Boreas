@@ -9,6 +9,7 @@
 
 #include "LindaDriver.hpp"
 #include "tuplas.hpp"
+#include <cstring>
 
 using namespace std;
 

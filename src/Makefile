@@ -19,13 +19,14 @@ OCLIENT=clienteInteractivo
 SERVER=servidorLinda
 TUPLAS=tuplas
 SERVEI=servei
+TEST=test
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
 
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT}
+all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${TEST}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -57,6 +58,15 @@ ${CLIENT}.o: ${CLIENT}.cpp
 # Linkado
 ${CLIENT}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o  
 	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o -o ${CLIENT} ${SOCKETSFLAGS}
+#-----------------------------------------------------------
+# TESTEO
+# Compilacion
+${TEST}.o: ${TEST}.cpp
+	${CC} -c ${CPPFLAGS} ${TEST}.cpp
+
+# Linkado
+${TEST}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o -o ${TEST} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # OTROCLIENTE
 # Compilacion
@@ -100,6 +110,7 @@ clean:
 	$(RM) ${SOCKET}.o
 	$(RM) ${TUPLAS}.o
 	$(RM) ${CLIENT} ${CLIENT}.o
+	$(RM) ${TEST} ${TEST}.o
 	$(RM) ${OCLIENT} ${OCLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o
 	$(RM) ${SERVEI} ${SERVEI}.o

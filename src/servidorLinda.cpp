@@ -16,7 +16,7 @@
 #include <mutex>
 
 bool STOP = false;
-const int N = 10;
+const int N = 300;
 const int MAX_ATTEMPS = 10;
 const char MENS_FIN[] = "END OF SERVICE";
 
@@ -85,11 +85,10 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 	    // char MENS_FIN[] = "END OF SERVICE";
 	    // Buffer para recibir el mensaje
 	    int length = 200;
+	    char message[length];
 	    char buffer[length];
 
 	    string operation;
-
-	    string message;
 
 	    bool out = false;  // Inicialmente no salir del bucle
 
@@ -99,8 +98,8 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 
 	    while(!out)
 		{
-		    // Recibimos la operación que el cliente desea realizar
-		    int rcv_bytes = soc.Recv(client_fd, operation, length);
+		    // Recibimos la operación y tupla que el cliente desea realizar
+		    int rcv_bytes = soc.Recv(client_fd, message, length);
 		    if(rcv_bytes == -1)
 			{
 			    string mensError(strerror(errno));
@@ -109,39 +108,24 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    soc.Close(client_fd);
 			}
 
-		    cout << "Mensaje recibido: " << operation << endl;
+		    cout << "Mensaje recibido: " << message << endl;
 
-		    if(operation == MENS_FIN)
+		    if(strcmp(message,MENS_FIN) == 0)
 			{
+				cout << "Salida detectada" << endl;
 			    out = true;  // Salir del bucle
 			}
 		    else
 			{
-			    // Contestamos al cliente que su petición está dispuesta a ser procesada
-			    int send_bytes = soc.Send(client_fd, "OK");
-
-			    if(send_bytes == -1)
-				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				    // Cerramos el socket
-				    soc.Close(client_fd);
-				}
-
-			    // Recibimos la operación que el cliente desea realizar
-			    rcv_bytes = soc.Recv(client_fd, buffer, length);
-			    if(rcv_bytes == -1)
-				{
-				    string mensError(strerror(errno));
-				    cerr << "Error al recibir datos: " + mensError + "\n";
-				    // Cerramos los sockets
-				    soc.Close(client_fd);
-				}
-
-			    cout << "Tupla: " << buffer << endl;
+			    strcpy(buffer,message);
+				
+				char* operacion = strtok (message,":");
+				char* tupla = strtok (NULL, ":");
+				int ssize = tamanyo(tupla);
+				Tupla t (ssize);
+				t.from_string(tupla);
 			    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
-			    int ssize = tamanyo(buffer);
-			    message = operation + ":" + buffer;
-			    cout << "Mensaje a enviar: " << message << endl;
+			    cout << "Operación recibida: " << operacion << endl;
 
 			    if(ssize <= 3)
 				{
@@ -165,19 +149,16 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				}
 
 			    // Elegido servidor
-			    send_bytes = serverX.Send(descriptor, message);
+			    int send_bytes = serverX.Send(descriptor, buffer);
 			    if(send_bytes == -1)
 				{
 				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    serverX.Close(descriptor);
 				}
-			    else
-				{
-				    cout << "CORRECTO " << send_bytes << " bytes enviados." << endl;
-				}
+
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
-			    cout << "####" << buffer << "####" << endl;
+			    //cout << "####" << buffer << "####" << endl;
 			    if(read_bytes == -1)
 				{
 				    string mensError(strerror(errno));
