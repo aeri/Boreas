@@ -10,6 +10,10 @@
  * ----------------------------------------------------------
  */
 
+/*
+ * Fichero de implementación del módulo LindaDriver
+ */
+
 #include <cstring>
 #include <iomanip>
 #include <iostream>
