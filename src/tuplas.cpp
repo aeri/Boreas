@@ -1,3 +1,19 @@
+/*
+ * ----------------------------------------------------------
+ * -- Programación de sistemas concurrentes y distribuidos --
+ * -- Trabajo práctico : Servidor Linda ---------------------
+ * -- Autores y NIP -----------------------------------------
+ * -- Daniel Naval Alcalá  739274 ---------------------------
+ * -- Alejandro Omist Casado 737791 -------------------------
+ * -- Rubén Rodríguez Esteban 737215 ------------------------
+ * -- José Manuel Romero Clavería 74 ------------------------
+ * ----------------------------------------------------------
+ */
+
+/*
+ * Fichero de implementación del módulo Tupla.
+ */
+
 #include <sstream>
 #include "tuplas.hpp"
 
