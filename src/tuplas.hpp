@@ -39,11 +39,11 @@ class Tupla
     Tupla(string p1, string p2, string p3, string p4);
     Tupla(string p1, string p2, string p3, string p4, string p5);
     Tupla(string p1, string p2, string p3, string p4, string p5, string p6);
-    Tupla(int dimension);
-    void from_string(string tupla);
-    string to_string();
-    string get(int indice);
-    void set(int indice, string campo);
+    Tupla(int dimension);                 // Devuelve dimensión de tupla
+    void from_string(string tupla);       // Convierte sel string <<tupla>> en una tupla
+    string to_string();                   // Tranforma una tupla en un string
+    string get(int indice);               // Obtiene la componente de la tupla cuya posicion es <<indice>>
+    void set(int indice, string campo);   // Asigna <<campo>> a la componente de la tupla cuya posición es <<indice>>
     int size();
 };
 
