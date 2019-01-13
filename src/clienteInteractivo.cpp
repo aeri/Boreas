@@ -15,6 +15,8 @@
 
 #include <chrono>
 
+const int MAX_LONG_LINEA = 128;
+
 using namespace std;
 
 /*
@@ -74,9 +76,19 @@ int main(int argc, char* argv[])
 	    // si no desea parar la ejecución del cliente
 	    if(operacion != 0)
 		{
-		    // Validación de la dimensión de la tupla
+		    // Petición de dimensión
 		    cout << "Introduzca dimensión: " << flush;
 		    cin >> dimension;
+
+		    // Validación de la dimensión de la tupla
+		    while (cin.fail() || dimension < 1 || dimension > 6) {
+		    	cin.clear();
+        		cin.ignore(MAX_LONG_LINEA,'\n');
+				cerr << "Dimensión no válida " << endl;
+				cout << "Introduzca dimensión: " << flush;
+				cin >> dimension;
+		    }
+
 		    
 		    // Constructor de la tupla
 		    Tupla tta(dimension);
