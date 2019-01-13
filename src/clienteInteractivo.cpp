@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	{
 	    cerr << "Invocar como:" << endl;
 	    cerr << "   mainLindaDriver <IP_LS> <Port_LS>" << endl;
-	    cerr << "      <IP_LS>: IP del servidor Linda" e< endl;
+	    cerr << "      <IP_LS>: IP del servidor Linda" << endl;
 	    cerr << "      <Port_LS>: puerto del servidor Linda" << endl;
 	    return 1;
 	}
@@ -69,8 +69,6 @@ int main(int argc, char* argv[])
 	    // Petición al usuario de tarea a pedir al cliente
 	    cout << endl << "Introduzca operación: " << flush;
 	    cin >> operacion;
-
-	    int i = 1;
 	    string componente;
 
 	    // si no desea parar la ejecución del cliente
