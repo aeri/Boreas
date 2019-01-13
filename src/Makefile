@@ -14,14 +14,16 @@ CC=g++
 
 DRIVER=LindaDriver
 MONITOR=monitorLinda
+#Clientes
 CLIENT=mainLindaDriver
 OCLIENT=clienteInteractivo
+MIXTO=clienteMixto
+TEST=test
+BRUTA=bruta
+#Fin de clientes
 SERVER=servidorLinda
 TUPLAS=tuplas
 SERVEI=servei
-TEST=test
-BRUTA=bruta
-MIXTO=clienteMixto
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
 

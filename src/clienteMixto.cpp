@@ -9,11 +9,11 @@
  * -- José Manuel Romero Clavería 740914 --------------------
  * ----------------------------------------------------------
  */
-
 #include "LindaDriver.hpp"
 #include "tuplas.hpp"
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -23,7 +23,8 @@ const int COTA_SUP = 3;
 const int MAX_DIMENSION = 6;
 const int BASE_DECIMAL = 10;
 const int TIPO_CAMPO = 5;
-const int MAX_ESPACIO_ALFABETO = 36;
+const int MAX_ESPACIO_ALFABETO = 26;
+const string comodin = "?";
 
 
 /*
@@ -93,6 +94,7 @@ int main(int argc, char* argv[]){
         cin >> orden;
     }
 
+    cout << "Orden correcta" << endl;
     // Generador de numeros aleatorios
     srand(time(NULL));
 
@@ -100,7 +102,7 @@ int main(int argc, char* argv[]){
     int codigo_OP = rand() % COTA_SUP;
 
     // Seleccion de la dimension de la tupla aleatoria entre 0 y 6
-    int dimension = rand() % MAX_DIMENSION;
+    int dimension = (rand() % MAX_DIMENSION) + 1 ;
 
     // Cadena de caracteres que guarda la componente de la tupla a insertar
     string componente;
@@ -112,25 +114,34 @@ int main(int argc, char* argv[]){
     // Constructor de la tupla
     Tupla t(dimension);
 
-    for (int i = 0; i < dimension; i++){
+    cout << "dimension: " << dimension << endl;
+    cout << "codigo op: " << codigo_OP << endl;
+  
+  // Tipo de componente a introducir
+  int codigo_COMP;
+  
+    for (int i = 1; i <= dimension; i++){
 
-            // Tipo de componente a introducir
-            int codigo_COMP ;
+            cout << "iteracion numero: " << i << endl;
 
             if (codigo_OP == 0){
               // es PostNote
               // Calculo del tipo de componente a meter 0-3
-              codigo_COMP = rand() % (TIPO_CAMPO - 1);
+              codigo_COMP = rand() % (TIPO_CAMPO - 2);
             }
             else {
               // no es PostNote
               // no se pueden meter componentes con ?(A-Z)
               // Calculo del tipo de componente a meter 0-4
-              codigo_COMP = rand() % TIPO_CAMPO;
+              codigo_COMP = rand() % (TIPO_CAMPO -1 );
             }
+
+            cout << "codigo_COMP: " << codigo_COMP << endl;
 
             // Numero de caracteres de la cadena de 1 a 10
             int dim_campo = rand() % BASE_DECIMAL + 1;
+
+            cout << "dim_campo: " << dim_campo << endl;
 
             // Vaciado de la componente para limipar los datos antiguos
             componente.clear();
@@ -138,42 +149,50 @@ int main(int argc, char* argv[]){
             // Borrado del dato generado de forma automatica
             valor.clear();
 
+            cout << "Clears completados satisfactoriamente" << endl;
             switch (codigo_COMP) {
               case 0:
                     // Se rellena la componente con dim_campo numeros
-                    for (int j = 0; j < dim_campo; j++){
+                    for (int j =1; j <= dim_campo; j++){
                         valor = rand() % BASE_DECIMAL + '0';
                         componente = componente + valor;
+                        cout << "componente: " << componente << endl;
                     }
                     break;
               case 1:
                     // Se rellena la componente con dim_campo mayusculas
-                    for (int j = 0; j < dim_campo; j++){
+                    for (int j = 1; j <= dim_campo; j++){
                         valor = rand() % MAX_ESPACIO_ALFABETO + 'A';
                         componente = componente + valor;
+                        cout << "componente: " << componente << endl;
                     }
                     break;
               case 2:
                     // Se rellena la componente con dim_campo minusculas
-                    for (int j = 0; j < dim_campo; j++){
+                    for (int j = 1; j <= dim_campo; j++){
                         valor = rand() % MAX_ESPACIO_ALFABETO + 'a';
                         componente = componente + valor;
+                        cout << "componente: " << componente << endl;
                     }
                     break;
               case 3:
-                    // Se rellena con una variable cualquiera
-                    valor = "?" + (rand() % MAX_ESPACIO_ALFABETO + 'A');
+                    // Se rellena con una variable comodín
+          
+                    valor = (rand() % MAX_ESPACIO_ALFABETO + 'A');
+          valor = comodin + valor;
                     componente = componente + valor;
+                    cout << "componente: " << componente << endl;
                     break;
               default:
                     // Error en el formato de la componente
                     cerr << " Error en el formato de componente " << endl;
             }
             // La componente a insertar en la tupla ya esta obtenida
+            cout << "componente final:" << componente << endl;
             t.set(i, componente);
       }
       // La componente se ha insertado
-
+      cout<< "####INSTERTADA####" << endl;
 
       // Tratamiento de la operacion a enviar por parte del cliente
       switch (codigo_OP) {

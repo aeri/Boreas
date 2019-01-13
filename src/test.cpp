@@ -14,6 +14,8 @@
 #include <string>
 #include <chrono>
 
+#include <unistd.h>
+
 using namespace std;
 
 const int INTENTOS = 100;
@@ -26,8 +28,8 @@ int main(int argc, char* argv[])
 	{
 	    cerr << "Invocar como:" << endl;
 	    cerr << "   test <ipServer> <portServer> <numTuplas>" << endl;
-        cerr << "      <ipServer>: Número de tuplas a lanzar" << endl;
-        cerr << "      <portServer>: Número de tuplas a lanzar" << endl;
+        cerr << "      <ipServer>: IP del ServidorLinda" << endl;
+        cerr << "      <portServer>: Puerto del ServidorLinda" << endl;
 	    cerr << "      <numTuplas>: Número de tuplas a lanzar" << endl;
 	    return 1;
 	}
@@ -125,5 +127,8 @@ int main(int argc, char* argv[])
 	cout << "tiempo_RN END " << tiempo_RN/INTENTOS << endl;
 	
     LindaDriver.STOP();
+
+    pause();
+
     return 0;
 }

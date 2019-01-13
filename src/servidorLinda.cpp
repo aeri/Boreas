@@ -16,7 +16,7 @@
 #include <mutex>
 
 bool STOP = false;
-const int N = 20;
+const int N = 100;
 const int MAX_ATTEMPS = 50;
 const char MENS_FIN[] = "END OF SERVICE";
 
