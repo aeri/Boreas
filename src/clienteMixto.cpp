@@ -23,6 +23,8 @@ const int COTA_SUP = 3;
 const int MAX_DIMENSION = 6;
 const int BASE_DECIMAL = 10;
 const int TIPO_CAMPO = 5;
+const int MAX_ESPACIO_ALFABETO = 36;
+
 
 /*
  * Pre: ---
@@ -56,7 +58,7 @@ bool esOrdenValida(int& o){
  * de 0 y 1 informa de operacion desconocida y la solicita de nuevo
  *
  */
-int main(int argc, char* argv[]){ç
+int main(int argc, char* argv[]){
 
   if(argc < 2){
     cerr << "Invocar como:" << endl;
@@ -113,7 +115,7 @@ int main(int argc, char* argv[]){ç
     for (int i = 0; i < dimension; i++){
 
             // Tipo de componente a introducir
-            int codigo_COMP;
+            int codigo_COMP ;
 
             if (codigo_OP == 0){
               // es PostNote
@@ -124,7 +126,7 @@ int main(int argc, char* argv[]){ç
               // no es PostNote
               // no se pueden meter componentes con ?(A-Z)
               // Calculo del tipo de componente a meter 0-4
-              int codigo_COMP = rand() % TIPO_CAMPO;
+              codigo_COMP = rand() % TIPO_CAMPO;
             }
 
             // Numero de caracteres de la cadena de 1 a 10

@@ -9,10 +9,9 @@
 
 #include "LindaDriver.hpp"
 #include "tuplas.hpp"
-#include <cstdlib>     /* srand, rand */
-#include <ctime>
 #include <string>
 #include <chrono>
+#include <ctime>
 
 using namespace std;
 
@@ -25,13 +24,13 @@ int main(int argc, char* argv[])
     if(argc < 2)
 	{
 	    cerr << "Invocar como:" << endl;
-	    cerr << "   test <ipServer> <portServer> <numTuplas>" << endl;
+	    cerr << "   test <ipServer> <portServer>" << endl;
         cerr << "      <ipServer>: Número de tuplas a lanzar" << endl;
         cerr << "      <portServer>: Número de tuplas a lanzar" << endl;
 	    return 1;
 	}
 
-    srand (time(NULL));
+
 
     // un driver con los datos pasados en la invocación
     LD LindaDriver(argv[1], argv[2]);
@@ -46,9 +45,6 @@ int main(int argc, char* argv[])
     string start="[a,b,c,d,e,";
     string stop="]";
 
-    double tiempo_PN = 0.0;
-    double tiempo_RN = 0.0;
-    double tiempo_ReadN = 0.0;
     double tiempo_poblado = 0.0;
 
     int i = 0;
@@ -68,14 +64,10 @@ int main(int argc, char* argv[])
         ++i;
 
         auto end = std::chrono::system_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - init);
-        tiempo_poblado += elapsed.count();
-        cout << "Tiempo transcurrido: " << elapsed.count() << " segundos." << endl;
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+        tiempo_poblado += (elapsed.count() / 1000.0);
+        cout << "Tiempo transcurrido: " << tiempo_poblado << " segundos." << endl;
     }
-
-
-    cout << "Insertadas " << argv[3] << endl;
-
 	
     LindaDriver.STOP();
     return 0;

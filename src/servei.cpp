@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 	    cerr << "      <Port_LS>: puerto del servidor de almacenamiento" << endl;
 	    return 1;
 	}
-	const int N = 10;
+	const int N = 100;
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);
