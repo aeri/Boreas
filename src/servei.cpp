@@ -149,7 +149,6 @@ int main(int argc, char* argv[]) {
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);
-    thread cliente[N];
     int client_fd[N];
 
 	// Creación del monitor para guardar las tuplas en los distintos servidores
