@@ -219,7 +219,6 @@ int main(int argc, char* argv[])
 
     string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);
-    thread cliente[N];
     int client_fd[N];
 
     /********************************************
