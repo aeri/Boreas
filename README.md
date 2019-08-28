@@ -5,8 +5,24 @@
 </p>
 
 
-# Boreas
-A basic implementation in C++ of coordination language Linda in a distributed way motivated as a project for programming concurrent and distributed systems.
+<p align="center">
+  <a href="https://example.com/">
+    <img src="https://i.imgur.com/4JpMe9r.png" alt="Logo" width=100 height=100>
+  </a>
+
+  <h3 align="center">Boreas</h3>
+
+  <p align="center">
+  A <b>cute</b> Linda implementation in C++
+    <br>
+    <a href="https://github.com/aeri/Boreas/blob/master/README.md#Getting-Started">Getting Started</a>
+    ·
+    <a href="https://github.com/aeri/Boreas/blob/master/README.md#deployment">Deployment</a>
+  </p>
+</p>
+
+# The project
+An implementation in C++ of coordination language Linda in a distributed way, motivated as a project for programming concurrent and distributed systems.
 
 ## How it works?
 The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **readN** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
