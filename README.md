@@ -1,5 +1,4 @@
 <p align="center">
-  <a href="https://example.com/">
     <img src="https://i.imgur.com/4JpMe9r.png" alt="Logo" width=100 height=100>
   </a>
 
