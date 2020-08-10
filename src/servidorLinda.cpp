@@ -100,13 +100,17 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 		{
 		    // Recibimos la operación y tupla que el cliente desea realizar
 		    int rcv_bytes = soc.Recv(client_fd, message, length);
-		    if(rcv_bytes == -1)
+		    if(rcv_bytes <= 0 )
 			{
 			    string mensError(strerror(errno));
 			    cerr << "Error al recibir datos: " + mensError + "\n";
 			    // Cerramos los sockets
 			    soc.Close(client_fd);
+			    out = true;
+			    break;
 			}
+
+			cout << rcv_bytes << endl;
 
 		    cout << "Mensaje recibido: " << message << endl;
 
@@ -146,6 +150,8 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				{
 				    descriptor = -1;
 				    cerr << "Algo va mal" << endl;
+				    out = true;  // Salir del bucle
+				    break;
 				}
 
 			    // Elegido servidor
@@ -158,7 +164,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				}
 
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
-			    //cout << "####" << buffer << "####" << endl;
+
 			    if(read_bytes == -1)
 				{
 				    string mensError(strerror(errno));
@@ -166,6 +172,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    // Cerramos los sockets
 				    serverX.Close(descriptor);
 				}
+				cout << "RESPONSE: " << buffer << endl;
 			    send_bytes = soc.Send(client_fd, buffer);
 
 			    if(send_bytes == -1)
@@ -173,6 +180,8 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    soc.Close(client_fd);
+
+				    out = true;  // Salir del bucle
 				}
 			}
 		}
