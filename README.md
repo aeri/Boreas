@@ -19,14 +19,14 @@ An implementation in C++ of coordination language Linda in a distributed way, mo
 ## How it works?
 The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **ReadN** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
 
-* **PN**: Produces a tuple, writing it into tuplespace.
-* **RN**: Atomically reads and removes (consumes) a tuple from tuplespace. 
-* **ReadN**: Non-destructively reads a tuplespace.
+* **PN** *(out)*: Produces a tuple, writing it into tuplespace.
+* **RN** *(in)*: Atomically reads and removes (consumes) a tuple from tuplespace. 
+* **ReadN** *(rd)*: Non-destructively reads a tuplespace.
 
 Wildcards can be used for tuple components in RN and ReadN operations. For simplicity, a wildcard variable will be indicated by a string composed of "?" and a capital letter between "A" and "Z".
 
 
-![Linda space system](https://i.imgur.com/BNRPF3y.jpg)
+![Linda space system](https://i.imgur.com/qHnOAVo.png)
 
 
 The figure shows an abstraction of the developed system.
@@ -34,7 +34,7 @@ The Linda server publishes the interface of the distributed coordination system.
 
 
 
-On the other hand, the Linda server consists of three servers, possibly running on different machines, responsible for storing and managing the operations involving the truples they store. Specifically, the first server will work with size 1 to 3 tuples, the second with size 4 and 5, while the third will be responsible for size 6 tuples. Internally, the tuples will be stored in memory.
+On the other hand, the Linda server consists of three servers, possibly running on different machines, responsible for storing and managing the operations involving the tuples they store. Specifically, the first server will work with size 1 to 3 tuples, the second with size 4 and 5, while the third will be responsible for size 6 tuples. Internally, the tuples will be stored in memory.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* To compile the Linda system environment you need an operating system that supports POSIX Threads. Unix-like POSIX-conformant operating systems such as FreeBSD, NetBSD, OpenBSD, Linux, macOS...
+* To compile the Linda system environment you need an operating system that supports POSIX Threads. Unix-like POSIX-conformant operating systems such as GNU/Linux, FreeBSD, NetBSD, OpenBSD, macOS...
 
 * Make (build automation tool)
 
