@@ -42,10 +42,6 @@ int tamanyo(string s)
 
 void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int p2, string ip3, int p3)
 {
-    /********************************************
-        CONEXIÓN DEL SERVIDOR LINDA CON LOS SERVIDORES
-        DE ALMACENAMIENTO DE TUPLAS
-        *********************************************/
 
     int count = 0;
     int socket_s1;
@@ -100,7 +96,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 		{
 		    // Recibimos la operación y tupla que el cliente desea realizar
 		    int rcv_bytes = soc.Recv(client_fd, message, length);
-		    if(rcv_bytes <= 0 )
+		    if(rcv_bytes <= 0 || rcv_bytes >= length )
 			{
 			    string mensError(strerror(errno));
 			    cerr << "Error al recibir datos: " + mensError + "\n";
@@ -110,18 +106,20 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    break;
 			}
 
+			message[rcv_bytes] = '\0';
+
 			cout << rcv_bytes << endl;
 
 		    cout << "Mensaje recibido: " << message << endl;
 
-		    if(strcmp(message,MENS_FIN) == 0)
+		    if(strncmp(message,MENS_FIN, length) == 0)
 			{
 				cout << "Salida detectada" << endl;
 			    out = true;  // Salir del bucle
 			}
 		    else
 			{
-			    strcpy(buffer,message);
+			    strncpy(buffer,message,length);
 				
 				char* operacion = strtok (message,":");
 				char* tupla = strtok (NULL, ":");
@@ -149,28 +147,32 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    else
 				{
 				    descriptor = -1;
-				    cerr << "Algo va mal" << endl;
+				    cerr << "Fail to decode tuple size" << endl;
 				    out = true;  // Salir del bucle
 				    break;
 				}
 
 			    // Elegido servidor
 			    int send_bytes = serverX.Send(descriptor, buffer);
-			    if(send_bytes == -1)
+			    if(send_bytes <= 0)
 				{
 				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    serverX.Close(descriptor);
+				    out = true;
+				    break;
 				}
 
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
 
-			    if(read_bytes == -1)
+			    if(read_bytes <= 0)
 				{
 				    string mensError(strerror(errno));
 				    cerr << "Error al recibir datos: " + mensError + "\n";
 				    // Cerramos los sockets
 				    serverX.Close(descriptor);
+				    out = true;
+				    break;
 				}
 				cout << "RESPONSE: " << buffer << endl;
 			    send_bytes = soc.Send(client_fd, buffer);
@@ -180,7 +182,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    soc.Close(client_fd);
-
 				    out = true;  // Salir del bucle
 				}
 			}
@@ -230,10 +231,6 @@ int main(int argc, char* argv[])
     int SERVER_PORT = atoi(argv[1]);
     int client_fd[N];
 
-    /********************************************
-    UNA VEZ CONECTADOS LOS ALMACENES SE INICIA EL
-    SERVIDOR LINDA
-    *********************************************/
 
     cout << "Iniciando servidor Linda en puerto " << SERVER_PORT << endl;
 
@@ -262,8 +259,7 @@ int main(int argc, char* argv[])
 	    exit(1);
 	}
 
-    // thread
-    int contados = 0;
+    // threads
     int i = 0;
 
     // Atendemos a las peticiones de los clientes
@@ -278,9 +274,15 @@ int main(int argc, char* argv[])
 		    cerr << "Error en el accept: " + mensError + "\n";
 		    // Cerramos el socket
 		    socket.Close(socket_fd);
+		    
+		    for (int j = 0; j<i; ++j){
+		    	cout << "Cerrando socket " << j << endl;
+		    	socket.Close(client_fd[j]);
+		    }
+		    
 		    exit(1);
 		}
-	    if(!STOP)
+	    if(i < max_connections && !STOP)
 		{
 		    string aux = "Lanzo thread nuevo cliente " + to_string(i) + "\n";
 
@@ -291,7 +293,6 @@ int main(int argc, char* argv[])
 		    aux = "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
 		    cout << aux;
 
-		    contados++;
 		    i++;
 		}
 	    else

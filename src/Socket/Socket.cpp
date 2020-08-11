@@ -61,6 +61,10 @@ int Socket::Bind() {
 	// AF_INET     --> IPv4
 	// SOCK_STREAM --> Comunicación TCP
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	int option = 1;
+
+	// Kill "Address already in use" error message
+	setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
 	// Información de la dirección del servidor
 	struct sockaddr_in server;
@@ -143,6 +147,8 @@ int Socket::Recv(int fd, char* buffer, int buffer_length) {
 
 	if (num_bytes == -1) {
 		cerr << "Error al recibir datos del socket\n";
+		close(fd);
+		return -1;
 	}
 
 	// SEGUNDO: ENVIAMOS ACK
