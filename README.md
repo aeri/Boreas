@@ -17,13 +17,20 @@
 An implementation in C++ of coordination language Linda in a distributed way, motivated as a project for programming concurrent and distributed systems.
 
 ## How it works?
-The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **readN** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
+The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **ReadN** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
+
+* **PN**: Produces a tuple, writing it into tuplespace.
+* **RN**: Atomically reads and removes (consumes) a tuple from tuplespace. 
+* **ReadN**: Non-destructively reads a tuplespace.
+
+Wildcards can be used for tuple components in RN and ReadN operations. For simplicity, a wildcard variable will be indicated by a string composed of "?" and a capital letter between "A" and "Z".
+
 
 ![Linda space system](https://i.imgur.com/BNRPF3y.jpg)
 
 
 The figure shows an abstraction of the developed system.
-The Linda server publishes the interface of the distributed coordination system. This interface offers the remote processes five operations: connect to and disconnect from the service, in addition to the three tuple manipulation operations (PN, RN and readN). A C++ process will use the Linda driver library, which is implemented as part of the solution, to invoke these operations remotely.
+The Linda server publishes the interface of the distributed coordination system. This interface offers the remote processes five operations: connect to and disconnect from the service, in addition to the three tuple manipulation operations (PN, RN and ReadN). A C++ process will use the Linda driver library, which is implemented as part of the solution, to invoke these operations remotely.
 
 
 
@@ -59,6 +66,13 @@ g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall Socket/Socket.cpp -o Socket/S
 g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall mainLindaDriver.cpp
 ........
 ```
+
+### Windows Support
+
+Currently, support for Windows systems is limited and only the driver is available to act as a client, therefore it is necessary that the server structure is deployed on Unix-like systems. The driver allows to perform all the operations available by the server, however this driver has not been fully tested and may present some operational problems.
+
+The driver needs to be linked with the ```-lws2_32``` option if MinGW is used.
+
 ## Deployment
 
 ### Servers
