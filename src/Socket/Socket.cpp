@@ -49,6 +49,12 @@ int Socket::Accept() {
 	socklen_t sin_size=sizeof(struct sockaddr_in);
 	int fd = accept(socket_fd,(struct sockaddr *) &client, &sin_size);
 
+	// Get remote IP Address
+	struct sockaddr_in addr;
+    socklen_t addr_size = sizeof(struct sockaddr_in);
+    getpeername(fd, (struct sockaddr *)&addr, &addr_size);
+    cout << "Accepted: " << inet_ntoa(addr.sin_addr) << endl;
+
 	if(fd==-1) { 
 		cerr << "Error en accept\n";
 	}

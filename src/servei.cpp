@@ -28,6 +28,9 @@
 
 using namespace std;
 
+const int N = 100000;
+
+
 /*
  * Pre: <<s>> es una cadena de caracteres
  * Post: Devuelve cuantas subcadenas de caracteres hay separadas por comas
@@ -70,11 +73,13 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 		cout << "En espera a recibir datos del servidorLinda" << endl;
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		cout << buffer << endl;
-		if (rcv_bytes == -1) {
+		if (rcv_bytes <= 0) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
 			// Cerramos los sockets
-			soc.Close(client_fd);
+			out = true;
+			break;
+			//soc.Close(client_fd);
 		}
 
 		// Si recibimos "END OF SERVICE" --> Fin de la comunicación
@@ -145,7 +150,6 @@ int main(int argc, char* argv[]) {
 	    cerr << "      <Port_LS>: puerto del servidor de almacenamiento" << endl;
 	    return 1;
 	}
-	const int N = 100;
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);

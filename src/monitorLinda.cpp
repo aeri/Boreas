@@ -21,7 +21,6 @@
 
 using namespace std;
 
-const int MAX_ATTEMPS = 10;
 const int NUM_MATRIX = 6;
 
 //-----------------------------------------------------

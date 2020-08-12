@@ -16,7 +16,7 @@
 #include <mutex>
 
 bool STOP = false;
-const int N = 100;
+const int N = 100000;
 const int MAX_ATTEMPS = 50;
 const char MENS_FIN[] = "END OF SERVICE";
 
@@ -108,8 +108,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 
 			message[rcv_bytes] = '\0';
 
-			cout << rcv_bytes << endl;
-
 		    cout << "Mensaje recibido: " << message << endl;
 
 		    if(strncmp(message,MENS_FIN, length) == 0)
@@ -129,7 +127,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
 			    cout << "Operación recibida: " << operacion << endl;
 
-			    if(ssize <= 3)
+			    if(ssize > 0 && ssize <= 3)
 				{
 				    serverX = server1;
 				    descriptor = socket_s1;
@@ -174,7 +172,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    out = true;
 				    break;
 				}
-				cout << "RESPONSE: " << buffer << endl;
+
 			    send_bytes = soc.Send(client_fd, buffer);
 
 			    if(send_bytes == -1)
@@ -207,6 +205,9 @@ int main(int argc, char* argv[])
 {
 
 	struct sigaction sigIntHandler;
+
+	// Prevent SIGPIPEs caused by sockets
+	signal(SIGPIPE, SIG_IGN);
 
 	sigIntHandler.sa_handler = capturarSIGINT;
 	sigemptyset(&sigIntHandler.sa_mask);

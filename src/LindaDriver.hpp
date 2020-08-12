@@ -25,7 +25,6 @@
 class LD : public Socket
 {
    private:
-    int port; //puerto de conexión 
     string ip; //dirección ip
     int socket_fd; //socket de conexión
 

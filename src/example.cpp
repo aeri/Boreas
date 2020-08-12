@@ -1,12 +1,3 @@
-//*****************************************************************
-// File:   mainLindaDriver.cpp
-// Author: PSCD-Unizar
-// Date:   septiembre 2016
-// Coms:   Esqueleto para prueba del TP-6
-//         invocar mediante
-//            mainLindaDriver IP_LindaServer Port_LindaServer ...
-//*****************************************************************
-
 #include "LindaDriver.hpp"
 #include "tuplas.hpp"
 #include <cstring>
@@ -20,7 +11,7 @@ int main(int argc, char* argv[])
     if(argc < 2)
 	{
 	    cerr << "Invocar como:" << endl;
-	    cerr << "   mainLindaDriver <IP_LS> <Port_LS>" << endl;
+	    cerr << "   example <IP_LS> <Port_LS>" << endl;
 	    cerr << "      <IP_LS>: IP del servidor Linda" << endl;
 	    cerr << "      <Port_LS>: puerto del servidor Linda" << endl;
 	    return 1;

@@ -70,7 +70,7 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
     // Chequeamos si se ha realizado la conexión
     if(socket_fd == -1)
 	{
-	    cout << "Error Grave" << endl;
+	    cerr << "Connection failed!" << endl;
 	}
 };
 
@@ -90,22 +90,18 @@ void LD::PN(Tupla t)
 
     if(send_bytes == -1)
 	{
-	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+	    cerr << "Error at PN SEND: " << strerror(errno) << endl;
 	    // Cerramos el socket
 	    Close(socket_fd);
 	    exit(1);
 	}
-    cout << "Enviado PN" << endl;
     // Buffer para almacenar la respuesta, como char[]
     string buffer;
 
 	int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
-	if (read_bytes > 0){
-		cout << "\033[1;41m" << buffer << "\033[0m\n";
-	}
-	else{
-		cerr << "ERROR" << endl;
+	if (read_bytes <= 0){
+		cerr << "Error at PN ACK" << endl;
 	}
 };
 
@@ -124,7 +120,7 @@ Tupla LD::RN(Tupla t)
 
     if(send_bytes == -1)
 	{
-	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+	    cerr << "Error at RN SEND: " << strerror(errno) << endl;
 	    // Cerramos el socket
 	    Close(socket_fd);
 	    exit(1);
@@ -137,11 +133,10 @@ Tupla LD::RN(Tupla t)
     if(read_bytes == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error al recibir datos: " + mensError + "\n";
+	    cerr << "Error at RN RESPONSE: " + mensError + "\n";
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-	cout << "vuelta:" << buffer << endl;
     Tupla r(tamanyo(buffer));
     r.from_string(buffer);
     return r;
@@ -162,7 +157,7 @@ Tupla LD::ReadN(Tupla t)
 
     if(send_bytes == -1)
 	{
-	    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+	    cerr << "Error at ReadN SEND: " << strerror(errno) << endl;
 	    // Cerramos el socket
 	    Close(socket_fd);
 	    exit(1);
@@ -175,11 +170,10 @@ Tupla LD::ReadN(Tupla t)
     if(read_bytes == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error al recibir datos: " + mensError + "\n";
+	    cerr << "Error at ReadN RESPONSE: " + mensError + "\n";
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-	cout << "vuelta:" << buffer << endl;
     Tupla r(tamanyo(buffer));
     r.from_string(buffer);
     return r;
