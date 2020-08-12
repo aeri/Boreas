@@ -15,11 +15,11 @@ CC=g++
 DRIVER=LindaDriver
 MONITOR=monitorLinda
 #Clientes
-CLIENT=mainLindaDriver
+CLIENT=example
 OCLIENT=clienteInteractivo
 MIXTO=clienteMixto
 TEST=test
-BRUTA=bruta
+BRUTA=bruteforce
 #Fin de clientes
 SERVER=servidorLinda
 TUPLAS=tuplas
