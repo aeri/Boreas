@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -70,8 +71,10 @@ int Socket::Bind() {
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	int option = 1;
 
-	// Kill "Address already in use" error message
+	// Disable Nagle's algorithm
 	setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+	// Kill "Address already in use" error message
+	setsockopt(socket_fd, IPPROTO_TCP, TCP_NODELAY, &option, sizeof(option));
 
 	// Información de la dirección del servidor
 	struct sockaddr_in server;
