@@ -70,12 +70,12 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 	bool out = false; // Inicialmente no salir del bucle
 	while(!out) {
 		// Recibimos el mensaje del cliente
-		cout << "En espera a recibir datos del servidorLinda" << endl;
+		cout << "info: ready to execute Linda server request" << endl;
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
-		cout << buffer << endl;
+		cout << "debug: message received from Linda server: " << buffer << endl;
 		if (rcv_bytes <= 0) {
 			string mensError(strerror(errno));
-    		cerr << "Error al recibir datos: " + mensError + "\n";
+    		cerr << "error: failure to receive data from Linda server: " + mensError + "\n";
 			// Cerramos los sockets
 			out = true;
 			break;
@@ -95,8 +95,8 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			int ssize = tamanyo(tupla);
 			Tupla t (ssize);
 			t.from_string(tupla);
-			cout << "Operacion recibida: " << operacion << endl;
-			cout << "Tupla recibida: " << tupla << endl;
+			cout << "info: decoded operation: " << operacion << endl;
+			cout << "info: decoded tuple: " << tupla << endl;
 
 			string message;
 			// Determinación de la operación
@@ -112,7 +112,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 				// Ejecución de la operación del monitor
 				ML.ReadNote(t,r);
 				message = r.to_string();
-				cout << "La tupla que se devuelve al cliente queda así: " <<  message << endl;
+				cout << "info: ReadN resolves with: " <<  message << endl;
 			}
 			else if (strcmp(operacion,"RN") == 0){
 				// La operación es RemoveNote
@@ -120,7 +120,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 				// Ejecución de la operación del monitor
 				ML.RemoveNote(t,r);
 				message = r.to_string();
-				cout << "La tupla que se devuelve al cliente queda así: " <<  message << endl;
+				cout << "info: RN resolves with: " <<  message << endl;
 			}
 			// se guarda en <<message>> la respuesta al cliente
 			// Si es Postnote se envia OK
@@ -128,7 +128,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			int send_bytes = soc.Send(client_fd, message);
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
-    			cerr << "Error al enviar datos: " + mensError + "\n";
+    			cerr << "error: failure to send data to Linda server: " + mensError + "\n";
 				// Cerramos los sockets
 				soc.Close(client_fd);
 				exit(1);
@@ -136,7 +136,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 		}
 	}
 	// Cerramos cliente
-	cout << "Se cierra un thread de cliente" << endl;
+	cout << "info: closed client thread" << endl;
 	soc.Close(client_fd);
 }
 
@@ -145,11 +145,12 @@ int main(int argc, char* argv[]) {
 
  if(argc < 2)
 	{
-	    cerr << "Invocar como:" << endl;
-	    cerr << "   servidorLinda <Port_LS>" << endl;
-	    cerr << "      <Port_LS>: puerto del servidor de almacenamiento" << endl;
+	    cerr << "Start as:" << endl;
+	    cerr << "   servei <Port_LS>" << endl;
+	    cerr << "      <Port_LS>: storage server listen port" << endl;
 	    return 1;
 	}
+
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
     int SERVER_PORT = atoi(argv[1]);
@@ -157,6 +158,8 @@ int main(int argc, char* argv[]) {
 
 	// Creación del monitor para guardar las tuplas en los distintos servidores
 	MonitorLinda ML;
+
+	cout << "Starting storage server on port " << SERVER_PORT << endl;
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
@@ -166,7 +169,7 @@ int main(int argc, char* argv[]) {
 	int socket_fd =socket.Bind();
 	if (socket_fd == -1) {
 		string mensError(strerror(errno));
-    	cerr << "Error en el bind: " + mensError + "\n";
+    	cerr << "error: failure at Bind(): " + mensError + "\n";
 		exit(1);
 	}
 
@@ -175,7 +178,7 @@ int main(int argc, char* argv[]) {
 	int error_code = socket.Listen(max_connections);
 	if (error_code == -1) {
 		string mensError(strerror(errno));
-    	cerr << "Error en el listen: " + mensError + "\n";
+    	cerr << "error: failure at Listen(): " + mensError + "\n";
 		// Cerramos el socket
 		socket.Close(socket_fd);
 		exit(1);
@@ -188,16 +191,16 @@ int main(int argc, char* argv[]) {
 
 		if(client_fd[i] == -1) {
 			string mensError(strerror(errno));
-    		cerr << "Error en el accept: " + mensError + "\n";
+    		cerr << "error: failure at Accept(): " + mensError + "\n";
 			// Cerramos el socket
 			socket.Close(socket_fd);
 			exit(1);
 		}
 
-		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
+		cout << "info: allocating new client in thread " + to_string(i) + "\n";
 		// Lanzamiento del thread con la petición del cliente
 		thread(&servCliente, ref(socket), client_fd[i], ref(ML)).detach();
-		cout << "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
+
 	}
 	
 
@@ -205,11 +208,8 @@ int main(int argc, char* argv[]) {
     error_code = socket.Close(socket_fd);
     if (error_code == -1) {
 		string mensError(strerror(errno));
-    	cerr << "Error cerrando el socket del servidor: " + mensError + "\n";
+    	cerr << "error: failed at close server socket: " + mensError + "\n";
 	}
-
-	// Despedida
-	cout << "Bye bye" << endl;
 
     return error_code;
 }

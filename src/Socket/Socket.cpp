@@ -54,10 +54,10 @@ int Socket::Accept() {
 	struct sockaddr_in addr;
     socklen_t addr_size = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr *)&addr, &addr_size);
-    cout << "Accepted: " << inet_ntoa(addr.sin_addr) << endl;
+    cout << "sock-info: accepted: " << inet_ntoa(addr.sin_addr) << endl;
 
 	if(fd==-1) { 
-		cerr << "Error en accept\n";
+		cerr << "sock-error: failure at Accept()\n";
 	}
     return fd;
 }
@@ -115,7 +115,7 @@ int Socket::Connect() {
 	// Obtenemos la dirección del servidor
   	he = gethostbyname(SERVER_ADDRESS.c_str());
  	if (he==NULL) {       
-   		cerr << "Error obteniendo la dirección del servidor\n";
+   		cerr << "sock-error: failure to obtain server address\n";
 		return -1;
    	}
 
@@ -128,7 +128,7 @@ int Socket::Connect() {
 	// Establecemos la conexion con el servidor
 	int exito = connect(socket_fd, (struct sockaddr *)&server, sizeof(struct sockaddr));
 	if(exito==-1) {
-  		cerr << "Error conectando con el servidor " << SERVER_ADDRESS << ":" << SERVER_PORT << endl;
+  		cerr << "sock-error: failure to connect to the server " << SERVER_ADDRESS << ":" << SERVER_PORT << endl;
   		return -1;
   	} else {
   		return socket_fd;
@@ -153,7 +153,7 @@ int Socket::Recv(int fd, char* buffer, int buffer_length) {
 	int num_bytes = recv(fd, buffer, buffer_length, 0);
 
 	if (num_bytes == -1) {
-		cerr << "Error al recibir datos del socket\n";
+		cerr << "sock-error: failure to receive data from the socket\n";
 		close(fd);
 		return -1;
 	}

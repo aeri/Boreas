@@ -59,7 +59,7 @@ MonitorLinda::~MonitorLinda(){
 			default : 
 				// Caso de error
 				aux = nullptr; 
-				cerr << "ERROR" << endl;
+				cerr << "mon-error: tuple space > 6" << endl;
 		}
 		
 		// Determinación de la componente siguiente de la tupla 
@@ -145,7 +145,7 @@ void MonitorLinda::PostNote(Tupla t){
 	    tupleSpace6.primero = np;
 	    break;
 	default:
-	    cerr << "Error en la dimensión de la tupla" << endl;
+	    cerr << "mon-error: tuple dimension > 6 in PN" << endl;
 	}
     
     // Recorrido de las componentes de la tupla
@@ -199,7 +199,7 @@ void MonitorLinda::PostNote(Tupla t){
 	    break;
 	default:
 	    // Error
-	    cerr << "Error en la dimensión de la tupla" << endl;
+	    cerr << "mon-error: failure at notify: tuple dimension > 6" << endl;
 	}
 }
 
@@ -247,7 +247,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
 	    break;
 	default:
 	    fila = nullptr;
-	    cerr << "Error en la dimensión de la tupla" << endl;
+	    cerr << "mon-error: failure at get matrix (RN): tuple dimension > 6" << endl;
 	}
 
     // Asignación de punteros al punto de inicio de búsqueda
@@ -270,7 +270,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
 	    while(heBuscado || columna == nullptr)
 	    {
 		    // La tupla no está disponible 
-            	    cerr << "XXXX Tupla no encontrada XXXX" << endl;
+		    cout << "mon-info: tuple not found in tuples space (RN)" << endl;
 		    // Se duerme el cliente en cola la asociada a la variable condición correcta
 		    // Se determina en función de la dimensión de la tupla que ha pedido el cliente
 		    switch(dimension)
@@ -300,7 +300,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
 			    fila = tupleSpace6.primero;
 			    break;
 			default:
-			    cerr << "Error en la dimensión de la tupla" << endl;
+			    cerr << "mon-error: failure at wait (RN): tuple dimension > 6" << endl;
 			}
 		    columna = fila;
 		    aux = fila;
@@ -342,7 +342,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
 
 			    // Tratamiento especial si se borra la primera tupla
 			    if (columna == pr){
-			    	cout << "Borrando primer elemento" << endl;
+			    	cout << "mon-info: deleting first element of tuples space" << endl;
 				// Se debe desplazar el puntero de inicio de la matriz a la 
 				// tupla siguiente para no perder los restantes
 			    	switch(dimension)
@@ -366,7 +366,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
 						tupleSpace6.primero = columna->sigTupla;
 					    break;
 					default:
-					    cerr << "Error en la dimensión de la tupla" << endl;
+					    cerr << "mon-error: failure at delete first element: tuple dimension > 6" << endl;
 					}
 
 			    }
@@ -435,7 +435,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 	    break;
 	default:
 	    fila = nullptr;
-	    cerr << "Error en la dimensión de la tupla" << endl;
+	    cerr << "mon-error: failure at get matrix (RN): tuple dimension > 6" << endl;
 	}
 
     columna = fila;
@@ -454,6 +454,10 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 		{
 		    // gestión del bloqueo del cliente en la cola asociada a la 
 		    // variable condición correspondiente
+
+		    // La tupla no se ha encontrado 
+		    cout << "mon-info: tuple not found in tuples space (ReadN)" << endl;
+		    
 		    switch(dimension)
 			{
 			case 1:
@@ -481,7 +485,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 			    fila = tupleSpace6.primero;
 			    break;
 			default:
-			    cerr << "Error en la dimensión de la tupla" << endl;
+			    cerr << "mon-error: failure at wait (ReadN): tuple dimension > 6" << endl;
 			}
 		    columna = fila;
 		}
@@ -512,11 +516,6 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 		    // Se avanza a la siguiente tupla
 		    columna = columna->sigTupla;
 		    fila = columna;
-		}
-	    if(!encontrado)
-		{
-		    // La tupla no se ha encontrado 
-		    cerr << "XXXX Tupla no encontrada XXXX" << endl;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include <queue>
 #include <sstream>
 #include <string>
+#include <regex>
 #include <thread>
 #include "Socket.hpp"
 #include "tuplas.hpp"
@@ -19,10 +20,11 @@ bool STOP = false;
 const int N = 100000;
 const int MAX_ATTEMPS = 50;
 const char MENS_FIN[] = "END OF SERVICE";
+regex e ("(?:ReadN|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
 
 
 void capturarSIGINT(int s){
-	cout << endl << "Señal " << s << " capturada." << endl;
+	cout << endl << "info: signal " << s << " handled." << endl;
 	STOP = true;
 }
 
@@ -71,11 +73,11 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
     // Chequeamos si se ha realizado la conexión
     if(socket_s1 == -1 || socket_s2 == -1 || socket_s3 == -1)
 	{
-	    cerr << "Error al conectar" << endl;
+	    cerr << "error: failure in servei connection" << endl;
 	}
     else
 	{
-	    cout << "Servidores conectados" << endl;
+	    cout << "info: all serveis are connected" << endl;
 
 	    // Buffer para recibir el mensaje
 	    // char MENS_FIN[] = "END OF SERVICE";
@@ -99,7 +101,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 		    if(rcv_bytes <= 0 || rcv_bytes >= length )
 			{
 			    string mensError(strerror(errno));
-			    cerr << "Error al recibir datos: " + mensError + "\n";
+			    cerr << "error: failure at receive data from client: " + mensError + "\n";
 			    // Cerramos los sockets
 			    soc.Close(client_fd);
 			    out = true;
@@ -108,25 +110,20 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 
 			message[rcv_bytes] = '\0';
 
-		    cout << "Mensaje recibido: " << message << endl;
+	  		if (regex_match (message,e)){
+	  			cout << "info: string message matched: " << message << endl;
 
-		    if(strncmp(message,MENS_FIN, length) == 0)
-			{
-				cout << "Salida detectada" << endl;
-			    out = true;  // Salir del bucle
-			}
-		    else
-			{
-			    strncpy(buffer,message,length);
+				strncpy(buffer,message,length);
 				
 				char* operacion = strtok (message,":");
 				char* tupla = strtok (NULL, ":");
 				int ssize = tamanyo(tupla);
 				Tupla t (ssize);
 				t.from_string(tupla);
-			    // Si recibimos "END OF SERVICE" --> Fin de la comunicación
-			    cout << "Operación recibida: " << operacion << endl;
 
+			    cout << "info: operation detected: " << operacion << endl;
+
+				// Elegido servidor
 			    if(ssize > 0 && ssize <= 3)
 				{
 				    serverX = server1;
@@ -145,16 +142,16 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    else
 				{
 				    descriptor = -1;
-				    cerr << "Fail to decode tuple size" << endl;
+				    cerr << "error: tuple size decoding failed" << endl;
 				    out = true;  // Salir del bucle
 				    break;
 				}
 
-			    // Elegido servidor
+			    
 			    int send_bytes = serverX.Send(descriptor, buffer);
 			    if(send_bytes <= 0)
 				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    cerr << "error: failure at send data to servei: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    serverX.Close(descriptor);
 				    out = true;
@@ -166,7 +163,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    if(read_bytes <= 0)
 				{
 				    string mensError(strerror(errno));
-				    cerr << "Error al recibir datos: " + mensError + "\n";
+				    cerr << "error: failure at receive data from servei: " + mensError + "\n";
 				    // Cerramos los sockets
 				    serverX.Close(descriptor);
 				    out = true;
@@ -177,15 +174,28 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 
 			    if(send_bytes == -1)
 				{
-				    cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				    cerr << "error: failure at send data to client: " << strerror(errno) << endl;
 				    // Cerramos el socket
 				    soc.Close(client_fd);
 				    out = true;  // Salir del bucle
 				}
-			}
+
+	  		}
+	  		else if (strncmp(message,MENS_FIN, length) == 0){
+	  			cout << "info: end of service requested" << endl;
+			    out = true;  // Salir del bucle
+			    break;
+	  		}
+	  		else{
+	  			cerr << "error: operation not recognized" << endl;
+	  			out = true;  // Salir del bucle
+				break;
+	  		}
+			    
+			
 		}
 	}
-	cout << "Cerrado un servicio" << endl;
+	cout << "info: closed service" << endl;
     server1.Send(socket_s1, MENS_FIN);
     server2.Send(socket_s2, MENS_FIN);
     server3.Send(socket_s3, MENS_FIN);
@@ -195,7 +205,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
     int error_code3 = server3.Close(socket_s3);
     if(error_code1 == -1 || error_code2 == -1 || error_code3 == -1)
 	{
-	    cerr << "Error cerrando el socket: " << strerror(errno) << endl;
+	    cerr << "error: failure to close the socket: " << strerror(errno) << endl;
 	}
 
     soc.Close(client_fd);
@@ -216,15 +226,15 @@ int main(int argc, char* argv[])
 
     if(argc < 8)
 	{
-	    cerr << "Invocar como:" << endl;
+	    cerr << "Start as:" << endl;
 	    cerr << "   servidorLinda <Port_LS> <IP_S1> <Port_S1> <IP_S2> <Port_S2> <IP_S3> <Port_S3>" << endl;
-	    cerr << "      <Port_LS>: puerto del servidor Linda" << endl;
-	    cerr << "      <IP_S1>: IP del servidor 1" << endl;
-	    cerr << "      <Port_S1>: puerto del servidor 1" << endl;
-	    cerr << "      <IP_S2>: IP del servidor 2" << endl;
-	    cerr << "      <Port_S2>: puerto del servidor 2" << endl;
-	    cerr << "      <IP_S3>: IP del servidor 3" << endl;
-	    cerr << "      <Port_S3>: puerto del servidor 3" << endl;
+	    cerr << "      <Port_LS>: Linda server listen port" << endl;
+	    cerr << "      <IP_S1>: storage server 1 IP address" << endl;
+	    cerr << "      <Port_S1>: storage server 1 port" << endl;
+	    cerr << "      <IP_S2>: storage server 2 IP address" << endl;
+	    cerr << "      <Port_S2>: storage server 2 port" << endl;
+	    cerr << "      <IP_S3>: storage server 3 IP address" << endl;
+	    cerr << "      <Port_S3>: storage server 3 port" << endl;
 	    return 1;
 	}
 
@@ -232,8 +242,17 @@ int main(int argc, char* argv[])
     int SERVER_PORT = atoi(argv[1]);
     int client_fd[N];
 
+    cout << R"(
+	 __  __  __  __     __ 
+	|__)/  \|__)|_  /\ (_  
+	|__)\__/| \ |__/--\__) 
+                       
+	github.com/aeri/boreas
+	Licensed under the GNU General Public License v3.0 
+	)" << '\n';
 
-    cout << "Iniciando servidor Linda en puerto " << SERVER_PORT << endl;
+
+    cout << "Starting Linda server on port " << SERVER_PORT << endl;
 
     // Creación del socket con el que se llevará a cabo
     // la comunicación con el servidor.
@@ -244,7 +263,7 @@ int main(int argc, char* argv[])
     if(socket_fd == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error en el bind: " + mensError + "\n";
+	    cerr << "error: failure at Bind(): " + mensError + "\n";
 	    exit(1);
 	}
 
@@ -254,7 +273,7 @@ int main(int argc, char* argv[])
     if(error_code == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error en el listen: " + mensError + "\n";
+	    cerr << "error: failure at Listen(): " + mensError + "\n";
 	    // Cerramos el socket
 	    socket.Close(socket_fd);
 	    exit(1);
@@ -272,12 +291,12 @@ int main(int argc, char* argv[])
 	    if(client_fd[i] == -1)
 		{
 		    string mensError(strerror(errno));
-		    cerr << "Error en el accept: " + mensError + "\n";
+		    cerr << "error: failure at Accept(): " + mensError + "\n";
 		    // Cerramos el socket
 		    socket.Close(socket_fd);
 		    
 		    for (int j = 0; j<i; ++j){
-		    	cout << "Cerrando socket " << j << endl;
+		    	cout << "info: closing socket " << j << endl;
 		    	socket.Close(client_fd[j]);
 		    }
 		    
@@ -285,20 +304,17 @@ int main(int argc, char* argv[])
 		}
 	    if(i < max_connections && !STOP)
 		{
-		    string aux = "Lanzo thread nuevo cliente " + to_string(i) + "\n";
+		    string aux = "info: allocating new client in thread " + to_string(i) + "\n";
 
 		    cout << aux;
 
 		    thread(&servCliente, ref(socket), client_fd[i], argv[2], atoi(argv[3]), argv[4], atoi(argv[5]),
 		           argv[6], atoi(argv[7])).detach();
-		    aux = "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
-		    cout << aux;
-
 		    i++;
 		}
 	    else
 		{
-		    string aux = "Se va a Finalizar el programa\n";
+		    string aux = "info: server stopped\n";
 		    cout << aux;
 		}
 	}
