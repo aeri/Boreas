@@ -17,20 +17,21 @@
 An implementation in C++ of coordination language Linda in a distributed way, motivated as a project for programming concurrent and distributed systems.
 
 ## How it works?
-The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **ReadN** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
+The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **RD** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
 
 * **PN** *(out)*: Produces a tuple, writing it into tuplespace.
 * **RN** *(in)*: Atomically reads and removes (consumes) a tuple from tuplespace. 
-* **ReadN** *(rd)*: Non-destructively reads a tuplespace.
+* **RD** *(rd)*: Non-destructively reads a tuplespace.
+* **RX**: Non-destructively reads a tuplespace without locking.
 
-Wildcards can be used for tuple components in RN and ReadN operations. For simplicity, a wildcard variable will be indicated by a string composed of "?" and a capital letter between "A" and "Z".
+Wildcards can be used for tuple components in RN and RD/RX operations. For simplicity, a wildcard variable will be indicated by a string composed of "?" and a capital letter between "A" and "Z".
 
 
 ![Linda space system](https://i.imgur.com/qHnOAVo.png)
 
 
 The figure shows an abstraction of the developed system.
-The Linda server publishes the interface of the distributed coordination system. This interface offers the remote processes five operations: connect to and disconnect from the service, in addition to the three tuple manipulation operations (PN, RN and ReadN). A C++ process will use the Linda driver library, which is implemented as part of the solution, to invoke these operations remotely.
+The Linda server publishes the interface of the distributed coordination system. This interface offers the remote processes five operations: connect to and disconnect from the service, in addition to the three tuple manipulation operations (PN, RN and RD/RX). A C++ process will use the Linda driver library, which is implemented as part of the solution, to invoke these operations remotely.
 
 
 
@@ -63,7 +64,7 @@ And all files will be compiled consecutively and automatically:
 g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall LindaDriver.cpp
 g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall tuplas.cpp -o tuplas.o
 g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall Socket/Socket.cpp -o Socket/Socket.o
-g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall mainLindaDriver.cpp
+g++ -c -I. -ISocket -O2 -std=c++11 -lsockets -Wall example.cpp
 ........
 ```
 
@@ -121,7 +122,7 @@ The clients are the ones who will service the Linda coordination service through
 ><Port_LS>: server port Linda
 
 
-* **Mixed Client:** Semi-atuomatic client, asks the user by keyboard a command and randomly selects an operation PN, ReadNote or RN and generates a tuple to work with. The process is repeated indefinitely.
+* **Mixed Client:** Semi-atuomatic client, asks the user by keyboard a command and randomly selects an operation PN, RD or RN and generates a tuple to work with. The process is repeated indefinitely.
 
 ```
 ./clienteMixto <IP_LS> <Port_LS>
@@ -134,7 +135,7 @@ The clients are the ones who will service the Linda coordination service through
 * **Bruteforce:** Automatically upload tuples to tuple servers for stress, memory and access time testing.
 
 ```
-./bruta <IP_LS> <Port_LS>
+./bruteforce <IP_LS> <Port_LS>
 ```
      
 ><IP_LS>: Linda server IP
