@@ -28,7 +28,8 @@ void presentarMenu(){
     cout << "Cliente interactivo Version 0.1" << endl;
     cout << "1. PN" << endl;
     cout << "2. RM" << endl;
-    cout << "3. ReadN" << endl;
+    cout << "3. RD" << endl;
+    cout << "4. RX" << endl;
     cout << "0. Parar" << endl;
 }
 
@@ -127,12 +128,32 @@ int main(int argc, char* argv[])
 			    // el usuario pide hacer ReadNote
 			    cout << "Se realiza ReadNote de " << tta.to_string() << endl;
 			    auto init = std::chrono::system_clock::now();
-			    cout << "Se devuelve: " << LindaDriver.ReadN(tta).to_string() << endl;
+			    cout << "Se devuelve: " << LindaDriver.RD(tta).to_string() << endl;
 			    auto end = std::chrono::system_clock::now();
 			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
 				
 			    cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
-		    }	
+		    }
+		    else if(operacion == 4){
+		    	bool found;
+			    // el usuario pide hacer ReadNote
+			    cout << "Se realiza ReadNote no bloqueante de " << tta.to_string() << endl;
+			    auto init = std::chrono::system_clock::now();
+
+			    string tupla = LindaDriver.RX(tta, found).to_string();
+
+			    if (found){
+			    	cout << "Se devuelve: " <<  tupla << endl;
+			    }
+			    else{
+			    	cout << "Tupla no encontrada." << endl;
+			    }
+			    
+			    auto end = std::chrono::system_clock::now();
+			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+				
+			    cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
+		    }
 		}
 	    else{
 		  // Se cierra conexión con el servidor Linda  

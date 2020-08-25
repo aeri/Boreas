@@ -32,7 +32,8 @@ class LD : public Socket
     LD(string ip, string p); //constructor 
     void PN(Tupla t); //PostNote
     Tupla RN(Tupla t); //RemoveNote
-    Tupla ReadN(Tupla t); //ReadNote
+    Tupla RD(Tupla t); //ReadNote
+    Tupla RX(Tupla t, bool& found); //ReadNote
     void STOP();//cierra la conexión del socket
 };
 

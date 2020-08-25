@@ -25,6 +25,8 @@
 
 using namespace std;
 
+string nf ("NOT_FOUND");
+
 /*
  * Pre: <<s>> es un string que representa una tupla cuyas componentes están sepradas por comas
  * Post: Devuelve el número de componentes separadas por comas que hay en <<s>>
@@ -147,17 +149,17 @@ Tupla LD::RN(Tupla t)
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
  */
-Tupla LD::ReadN(Tupla t)
+Tupla LD::RD(Tupla t)
 {
     const int MESSAGE_SIZE = 4001;
 
-    string message = "ReadN:" + t.to_string();
+    string message = "RD:" + t.to_string();
 
     int send_bytes = Send(socket_fd, message);
 
     if(send_bytes == -1)
 	{
-	    cerr << "Error at ReadN SEND: " << strerror(errno) << endl;
+	    cerr << "Error at RD SEND: " << strerror(errno) << endl;
 	    // Cerramos el socket
 	    Close(socket_fd);
 	    exit(1);
@@ -170,12 +172,56 @@ Tupla LD::ReadN(Tupla t)
     if(read_bytes == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error at ReadN RESPONSE: " + mensError + "\n";
+	    cerr << "Error at RD RESPONSE: " + mensError + "\n";
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
     Tupla r(tamanyo(buffer));
     r.from_string(buffer);
+    return r;
+};
+
+Tupla LD::RX(Tupla t, bool& found)
+{
+    const int MESSAGE_SIZE = 4001;
+
+    string message = "RX:" + t.to_string();
+
+    int send_bytes = Send(socket_fd, message);
+
+    if(send_bytes == -1)
+	{
+	    cerr << "Error at RD SEND: " << strerror(errno) << endl;
+	    // Cerramos el socket
+	    Close(socket_fd);
+	    exit(1);
+	}
+
+    // Buffer para almacenar la respuesta, como char[]
+    string buffer;
+    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+    Tupla r(tamanyo(buffer));
+
+    if(read_bytes == -1)
+	{
+	    string mensError(strerror(errno));
+	    cerr << "Error at RD RESPONSE: " + mensError + "\n";
+	    // Cerramos los sockets
+	    Close(socket_fd);
+	}
+
+
+	if (buffer.compare(nf) == 0){
+		found = false;
+		r.set(1, nf);
+
+	}
+	else{
+		found = true;
+	    r.from_string(buffer);
+	}
+
     return r;
 };
 

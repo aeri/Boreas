@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
     	init = std::chrono::system_clock::now(); 
 
-		LindaDriver.ReadN(ttp);
+		LindaDriver.RD(ttp);
 
 		end = std::chrono::system_clock::now(); 
 		elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);

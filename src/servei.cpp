@@ -29,6 +29,7 @@
 using namespace std;
 
 const int N = 100000;
+string nf ("NOT_FOUND");
 
 
 /*
@@ -106,13 +107,31 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 				ML.PostNote(t);
 				message = "OK";
 			}
-			else if (strcmp(operacion,"ReadN" )== 0){
+
+			else if (strcmp(operacion,"RD" )== 0){
 				// La operacion es ReadNote
 				Tupla r (ssize);
 				// Ejecución de la operación del monitor
-				ML.ReadNote(t,r);
+				ML.ReadNote(t,r, true);
 				message = r.to_string();
-				cout << "info: ReadN resolves with: " <<  message << endl;
+				cout << "info: RD resolves with: " <<  message << endl;
+			}
+
+			else if ( strcmp(operacion,"RX" )== 0){
+				// La operacion es ReadNote
+				Tupla r (ssize);
+				// Ejecución de la operación del monitor
+				ML.ReadNote(t,r, false);
+				message = r.to_string();
+
+				if (r.get(1).compare(nf) == 0){
+					message = nf;
+				}
+				else{
+					message = r.to_string();
+				}
+			
+				cout << "info: RX resolves with: " <<  message << endl;
 			}
 			else if (strcmp(operacion,"RN") == 0){
 				// La operación es RemoveNote

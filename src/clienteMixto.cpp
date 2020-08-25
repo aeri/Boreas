@@ -206,7 +206,7 @@ int main(int argc, char* argv[]){
               break;
         case 2:
               cout << "Cliente Mixto realiza ReadNote de " << t.to_string() << endl;
-              cout << "Se devuelve: " << LindaDriver.ReadN(t).to_string() << endl;
+              cout << "Se devuelve: " << LindaDriver.RD(t).to_string() << endl;
               break;
         default:
               cerr << " Error en el codigo de operacion" << endl;

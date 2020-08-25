@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     Tupla ttp("?X", "mi casa", "árbol");
     
     
-    cout << "El cliente recibe: " << LindaDriver.ReadN(ttp).to_string() << endl;
+    cout << "El cliente recibe: " << LindaDriver.RD(ttp).to_string() << endl;
     
     LindaDriver.PN(t2);
     LindaDriver.PN(t3);

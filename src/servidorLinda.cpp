@@ -20,7 +20,7 @@ bool STOP = false;
 const int N = 100000;
 const int MAX_ATTEMPS = 50;
 const char MENS_FIN[] = "END OF SERVICE";
-regex e ("(?:ReadN|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
+regex e ("(?:RD|RX|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
 
 
 void capturarSIGINT(int s){
@@ -146,7 +146,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    out = true;  // Salir del bucle
 				    break;
 				}
-
 			    
 			    int send_bytes = serverX.Send(descriptor, buffer);
 			    if(send_bytes <= 0)
@@ -158,6 +157,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    break;
 				}
 
+				//TIME PROBLEM
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
 
 			    if(read_bytes <= 0)
@@ -169,6 +169,9 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    out = true;
 				    break;
 				}
+
+
+
 
 			    send_bytes = soc.Send(client_fd, buffer);
 

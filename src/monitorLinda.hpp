@@ -71,6 +71,6 @@ class MonitorLinda
 
       void RemoveNote(Tupla t, Tupla& r);  //Busca una tupla, toma su valor y la borra del espacio de tuplas
 
-      void ReadNote(Tupla t, Tupla& r); //Busca una tupla en el espacio de tuplas con un patrón específico
+      void ReadNote(Tupla t, Tupla& r, bool locked); //Busca una tupla en el espacio de tuplas con un patrón específico
 };
 #endif
