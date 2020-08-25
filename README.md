@@ -14,7 +14,7 @@
 </p>
 
 # The project
-An implementation in C++ of coordination language Linda in a distributed way, motivated as a project for programming concurrent and distributed systems.
+An implementation in C++ of coordination language Linda in a distributed way, to be used in programming concurrent and distributed systems.
 
 ## How it works?
 The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **RD** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
@@ -22,7 +22,7 @@ The objective of the project is to carry out a distributed implementation of the
 * **PN** *(out)*: Produces a tuple, writing it into tuplespace.
 * **RN** *(in)*: Atomically reads and removes (consumes) a tuple from tuplespace. 
 * **RD** *(rd)*: Non-destructively reads a tuplespace.
-* **RX**: Non-destructively reads a tuplespace without locking.
+* **RX**: Non-destructively reads a tuplespace without blocking.
 
 Wildcards can be used for tuple components in RN and RD/RX operations. For simplicity, a wildcard variable will be indicated by a string composed of "?" and a capital letter between "A" and "Z".
 

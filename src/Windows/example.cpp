@@ -17,31 +17,31 @@
  * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
- * Fichero de interfaz del modulo LindaDriver
- */
 
-#ifndef _LINDADRIVER_HPP_
-#define _LINDADRIVER_HPP_
+#include "LindaDriver.hpp"
 
-#include <cstring>
 #include <iostream>
-#include "Socket.hpp"
-#include "Tuple.hpp"
 
-class LD : public Socket
-{
-   private:
-    string ip; //dirección ip
-    int socket_fd; //socket de conexión
+using namespace std;
 
-   public:
-    LD(string ip, string p); //constructor 
-    void PN(Tuple t); //PostNote
-    Tuple RN(Tuple t); //RemoveNote
-    Tuple RD(Tuple t); //ReadNote
-    Tuple RX(Tuple t, bool& found); //ReadNote
-    void STOP();//cierra la conexión del socket
-};
 
-#endif
+int main (){
+	
+	LD windriver = LD("localhost", "11777");
+	
+	Tuple t("A","B","C","1","2","3");
+	Tuple t2("A","?X","C","?Y","2","3");
+	
+	bool found;
+	
+	windriver.readNoteX(t, found );
+
+	windriver.postNote(t);
+	windriver.readNote(t2);
+	
+	windriver.removeNote(t);
+		
+	windriver.stop();
+	
+	return 0;
+}

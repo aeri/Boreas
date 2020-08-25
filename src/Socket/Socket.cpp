@@ -1,16 +1,21 @@
-//*****************************************************************
-// File:   Socket.cpp
-// Author: PSCD-Unizar
-// Date:   noviembre 2015
-// Coms:   Implementación de una librería genérica para 
-//         comunicación síncrona utilizando sockets
-//         La especificación se encuentra en "Socket.hpp"
-//         Como realiza "#include <Socket.hpp>", es necesario que 
-//         se indique al compilador que debe buscar ficheros 
-//         para incluir también en el directorio donde se encuentre
-//         "Socket.hpp", mediante
-//              -IpathDondeSeEncuentaSocket.hpp
-//*****************************************************************
+/*
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #include <sys/socket.h>
 #include <sys/types.h>
