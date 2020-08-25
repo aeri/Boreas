@@ -18,7 +18,6 @@ MONITOR=monitorLinda
 CLIENT=example
 OCLIENT=clienteInteractivo
 MIXTO=clienteMixto
-TEST=test
 BRUTA=bruteforce
 #Fin de clientes
 SERVER=servidorLinda
@@ -30,7 +29,7 @@ SOCKET=${SOCKET_DIR}/Socket
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${TEST} ${BRUTA} ${MIXTO}
+all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${BRUTA} ${MIXTO}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -81,15 +80,6 @@ ${BRUTA}.o: ${BRUTA}.cpp
 ${BRUTA}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o  
 	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o -o ${BRUTA} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
-# TESTEO
-# Compilacion
-${TEST}.o: ${TEST}.cpp
-	${CC} -c ${CPPFLAGS} ${TEST}.cpp
-
-# Linkado
-${TEST}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o -o ${TEST} ${SOCKETSFLAGS}
-#-----------------------------------------------------------
 # OTROCLIENTE
 # Compilacion
 ${OCLIENT}.o: ${OCLIENT}.cpp
@@ -133,7 +123,6 @@ clean:
 	$(RM) ${TUPLAS}.o
 	$(RM) ${CLIENT} ${CLIENT}.o
 	$(RM) ${BRUTA} ${BRUTA}.o
-	$(RM) ${TEST} ${TEST}.o
 	$(RM) ${MIXTO} ${MIXTO}.o
 	$(RM) ${OCLIENT} ${OCLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o
