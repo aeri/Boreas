@@ -1,17 +1,24 @@
 /*
- * ----------------------------------------------------------
- * -- Programación de sistemas concurrentes y distribuidos --
- * -- Trabajo práctico de Servidor Linda -------------------- 
- * -- Autores -----------------------------------------------
- * -- Daniel Naval Alcalá 739274 ----------------------------
- * -- Alejandro Omist Casado 739971 -------------------------
- * -- Rubén Rodríguez Esteban 737215 ------------------------
- * -- José Manuel Romero Clavería 740914 --------------------
- * ----------------------------------------------------------
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 #include <chrono>
 
@@ -28,7 +35,8 @@ void presentarMenu(){
     cout << "Cliente interactivo Version 0.1" << endl;
     cout << "1. PN" << endl;
     cout << "2. RM" << endl;
-    cout << "3. ReadN" << endl;
+    cout << "3. RD" << endl;
+    cout << "4. RX" << endl;
     cout << "0. Parar" << endl;
 }
 
@@ -91,7 +99,7 @@ int main(int argc, char* argv[])
 
 		    
 		    // Constructor de la tupla
-		    Tupla tta(dimension);
+		    Tuple tta(dimension);
 		   
 		    for (int i = 1; i <=dimension; i++){
 			
@@ -127,12 +135,32 @@ int main(int argc, char* argv[])
 			    // el usuario pide hacer ReadNote
 			    cout << "Se realiza ReadNote de " << tta.to_string() << endl;
 			    auto init = std::chrono::system_clock::now();
-			    cout << "Se devuelve: " << LindaDriver.ReadN(tta).to_string() << endl;
+			    cout << "Se devuelve: " << LindaDriver.RD(tta).to_string() << endl;
 			    auto end = std::chrono::system_clock::now();
 			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
 				
 			    cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
-		    }	
+		    }
+		    else if(operacion == 4){
+		    	bool found;
+			    // el usuario pide hacer ReadNote
+			    cout << "Se realiza ReadNote no bloqueante de " << tta.to_string() << endl;
+			    auto init = std::chrono::system_clock::now();
+
+			    string tupla = LindaDriver.RX(tta, found).to_string();
+
+			    if (found){
+			    	cout << "Se devuelve: " <<  tupla << endl;
+			    }
+			    else{
+			    	cout << "Tupla no encontrada." << endl;
+			    }
+			    
+			    auto end = std::chrono::system_clock::now();
+			    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - init);
+				
+			    cout << "Operacion realizada en: " << elapsed.count() << " milisegundos." << endl;
+		    }
 		}
 	    else{
 		  // Se cierra conexión con el servidor Linda  

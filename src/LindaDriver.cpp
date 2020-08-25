@@ -1,13 +1,20 @@
 /*
- * ----------------------------------------------------------
- * -- Programación de sistemas concurrentes y distribuidos --
- * -- Trabajo práctico : Servidor Linda ---------------------
- * -- Autores y NIP -----------------------------------------
- * -- Daniel Naval Alcalá  739274 ---------------------------
- * -- Alejandro Omist Casado 737791 -------------------------
- * -- Rubén Rodríguez Esteban 737215 ------------------------
- * -- José Manuel Romero Clavería 740914 --------------------
- * ----------------------------------------------------------
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -21,9 +28,11 @@
 #include <thread>
 #include "LindaDriver.hpp"
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 using namespace std;
+
+string nf ("NOT_FOUND");
 
 /*
  * Pre: <<s>> es un string que representa una tupla cuyas componentes están sepradas por comas
@@ -79,7 +88,7 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar PostNote 
  */
-void LD::PN(Tupla t)
+void LD::PN(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -110,7 +119,7 @@ void LD::PN(Tupla t)
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar RemoveNote y la devuelve 
  */
-Tupla LD::RN(Tupla t)
+Tuple LD::RN(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -137,7 +146,7 @@ Tupla LD::RN(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-    Tupla r(tamanyo(buffer));
+    Tuple r(tamanyo(buffer));
     r.from_string(buffer);
     return r;
 };
@@ -147,17 +156,17 @@ Tupla LD::RN(Tupla t)
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
  */
-Tupla LD::ReadN(Tupla t)
+Tuple LD::RD(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
-    string message = "ReadN:" + t.to_string();
+    string message = "RD:" + t.to_string();
 
     int send_bytes = Send(socket_fd, message);
 
     if(send_bytes == -1)
 	{
-	    cerr << "Error at ReadN SEND: " << strerror(errno) << endl;
+	    cerr << "Error at RD SEND: " << strerror(errno) << endl;
 	    // Cerramos el socket
 	    Close(socket_fd);
 	    exit(1);
@@ -170,12 +179,56 @@ Tupla LD::ReadN(Tupla t)
     if(read_bytes == -1)
 	{
 	    string mensError(strerror(errno));
-	    cerr << "Error at ReadN RESPONSE: " + mensError + "\n";
+	    cerr << "Error at RD RESPONSE: " + mensError + "\n";
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-    Tupla r(tamanyo(buffer));
+    Tuple r(tamanyo(buffer));
     r.from_string(buffer);
+    return r;
+};
+
+Tuple LD::RX(Tuple t, bool& found)
+{
+    const int MESSAGE_SIZE = 4001;
+
+    string message = "RX:" + t.to_string();
+
+    int send_bytes = Send(socket_fd, message);
+
+    if(send_bytes == -1)
+	{
+	    cerr << "Error at RD SEND: " << strerror(errno) << endl;
+	    // Cerramos el socket
+	    Close(socket_fd);
+	    exit(1);
+	}
+
+    // Buffer para almacenar la respuesta, como char[]
+    string buffer;
+    int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
+
+    Tuple r(tamanyo(buffer));
+
+    if(read_bytes == -1)
+	{
+	    string mensError(strerror(errno));
+	    cerr << "Error at RD RESPONSE: " + mensError + "\n";
+	    // Cerramos los sockets
+	    Close(socket_fd);
+	}
+
+
+	if (buffer.compare(nf) == 0){
+		found = false;
+		r.set(1, nf);
+
+	}
+	else{
+		found = true;
+	    r.from_string(buffer);
+	}
+
     return r;
 };
 

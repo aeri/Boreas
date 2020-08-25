@@ -1,13 +1,20 @@
 /*
- * ----------------------------------------------------------
- * -- Programación de sistemas concurrentes y distribuidos --
- * -- Trabajo práctico : Servidor Linda ---------------------
- * -- Autores y NIP -----------------------------------------
- * -- Daniel Naval Alcalá  739274 ---------------------------
- * -- Alejandro Omist Casado 737791 -------------------------
- * -- Rubén Rodríguez Esteban 737215 ------------------------
- * -- José Manuel Romero Clavería 740914 --------------------
- * ----------------------------------------------------------
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -107,7 +114,7 @@ bool sonIguales(string a, string b) {
  * Pre: La dimensión de la tupla t es >=1 && <=6
  * Post: Añade a la matriz correspondiente la tupla t
  */
-void MonitorLinda::PostNote(Tupla t){
+void MonitorLinda::PostNote(Tuple t){
     unique_lock<mutex> lck(mtxMonitor);
    
 
@@ -208,10 +215,8 @@ void MonitorLinda::PostNote(Tupla t){
  * Post: Busca la tupla t en la matriz correspondiente, la guarda en la tupla <<r>> y la borra
  *       de la matriz de tuplas correspondiente
  */
-void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
+void MonitorLinda::RemoveNote(Tuple t, Tuple& r){
     unique_lock<mutex> lck(mtxMonitor);
-
-    //cout << "////MONITOR BORRA" << endl;
 
     // Punteros auxiliares
     bbdd::Nodo* fila;
@@ -399,10 +404,9 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
  *Post:Busca la tupla t en la matriz correspondiente y actualiza el valor de dicha tupla
  */
 
-void MonitorLinda::ReadNote(Tupla t, Tupla& r){
-    unique_lock<mutex> lck(mtxMonitor);
+void MonitorLinda::ReadNote(Tuple t, Tuple& r, bool locked){
 
-  
+    unique_lock<mutex> lck(mtxMonitor);
 
     // Punteros auxiliares
     bbdd::Nodo* fila;
@@ -435,7 +439,7 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 	    break;
 	default:
 	    fila = nullptr;
-	    cerr << "mon-error: failure at get matrix (RN): tuple dimension > 6" << endl;
+	    cerr << "mon-error: failure at get matrix (ReadN): tuple dimension > 6" << endl;
 	}
 
     columna = fila;
@@ -452,42 +456,49 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 	    // no halla tuplas en la matriz el cliente se espera
 	    while(heBuscado || columna == nullptr)
 		{
-		    // gestión del bloqueo del cliente en la cola asociada a la 
-		    // variable condición correspondiente
+			if (locked){
+			    // gestión del bloqueo del cliente en la cola asociada a la 
+			    // variable condición correspondiente
 
-		    // La tupla no se ha encontrado 
-		    cout << "mon-info: tuple not found in tuples space (ReadN)" << endl;
-		    
-		    switch(dimension)
-			{
-			case 1:
-			    hay_tupla1.wait(lck);
-			    fila = tupleSpace1.primero;
-			    break;
-			case 2:
-			    hay_tupla2.wait(lck);
-			    fila = tupleSpace2.primero;
-			    break;
-			case 3:
-			    hay_tupla3.wait(lck);
-			    fila = tupleSpace3.primero;
-			    break;
-			case 4:
-			    hay_tupla4.wait(lck);
-			    fila = tupleSpace4.primero;
-			    break;
-			case 5:
-			    hay_tupla5.wait(lck);
-			    fila = tupleSpace5.primero;
-			    break;
-			case 6:
-			    hay_tupla6.wait(lck);
-			    fila = tupleSpace6.primero;
-			    break;
-			default:
-			    cerr << "mon-error: failure at wait (ReadN): tuple dimension > 6" << endl;
+			    // La tupla no se ha encontrado 
+			    cout << "mon-info: tuple not found in tuples space (RD/RX)" << endl;
+			    
+			    switch(dimension)
+				{
+				case 1:
+				    hay_tupla1.wait(lck);
+				    fila = tupleSpace1.primero;
+				    break;
+				case 2:
+				    hay_tupla2.wait(lck);
+				    fila = tupleSpace2.primero;
+				    break;
+				case 3:
+				    hay_tupla3.wait(lck);
+				    fila = tupleSpace3.primero;
+				    break;
+				case 4:
+				    hay_tupla4.wait(lck);
+				    fila = tupleSpace4.primero;
+				    break;
+				case 5:
+				    hay_tupla5.wait(lck);
+				    fila = tupleSpace5.primero;
+				    break;
+				case 6:
+				    hay_tupla6.wait(lck);
+				    fila = tupleSpace6.primero;
+				    break;
+				default:
+				    cerr << "mon-error: failure at wait (RD/RX): tuple dimension > 6" << endl;
+				}
+			    columna = fila;
 			}
-		    columna = fila;
+			else{
+				r.set(1,"NOT_FOUND");
+				encontrado = true;
+				break;
+			}
 		}
 
 	    // la tupla está en la matriz y no está en posesión de ningún otro cliente
@@ -518,4 +529,5 @@ void MonitorLinda::ReadNote(Tupla t, Tupla& r){
 		    fila = columna;
 		}
 	}
+	heBuscado = true;
 }

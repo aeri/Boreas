@@ -1,13 +1,20 @@
 /*
- * ----------------------------------------------------------
- * -- Programación de sistemas concurrentes y distribuidos --
- * -- Trabajo práctico : Servidor Linda ---------------------
- * -- Autores y NIP -----------------------------------------
- * -- Daniel Naval Alcalá  739274 ---------------------------
- * -- Alejandro Omist Casado 737791 -------------------------
- * -- Rubén Rodríguez Esteban 737215 ------------------------
- * -- José Manuel Romero Clavería 740914 --------------------
- * ----------------------------------------------------------
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -15,7 +22,7 @@
  */
 
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include "monitorLinda.hpp"
 #include <iostream>
 #include <thread>
@@ -29,6 +36,7 @@
 using namespace std;
 
 const int N = 100000;
+string nf ("NOT_FOUND");
 
 
 /*
@@ -93,7 +101,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			char* operacion = strtok (buffer,":");
 			char* tupla = strtok (NULL, ":");
 			int ssize = tamanyo(tupla);
-			Tupla t (ssize);
+			Tuple t (ssize);
 			t.from_string(tupla);
 			cout << "info: decoded operation: " << operacion << endl;
 			cout << "info: decoded tuple: " << tupla << endl;
@@ -106,17 +114,35 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 				ML.PostNote(t);
 				message = "OK";
 			}
-			else if (strcmp(operacion,"ReadN" )== 0){
+
+			else if (strcmp(operacion,"RD" )== 0){
 				// La operacion es ReadNote
-				Tupla r (ssize);
+				Tuple r (ssize);
 				// Ejecución de la operación del monitor
-				ML.ReadNote(t,r);
+				ML.ReadNote(t,r, true);
 				message = r.to_string();
-				cout << "info: ReadN resolves with: " <<  message << endl;
+				cout << "info: RD resolves with: " <<  message << endl;
+			}
+
+			else if ( strcmp(operacion,"RX" )== 0){
+				// La operacion es ReadNote
+				Tuple r (ssize);
+				// Ejecución de la operación del monitor
+				ML.ReadNote(t,r, false);
+				message = r.to_string();
+
+				if (r.get(1).compare(nf) == 0){
+					message = nf;
+				}
+				else{
+					message = r.to_string();
+				}
+			
+				cout << "info: RX resolves with: " <<  message << endl;
 			}
 			else if (strcmp(operacion,"RN") == 0){
 				// La operación es RemoveNote
-				Tupla r (ssize);
+				Tuple r (ssize);
 				// Ejecución de la operación del monitor
 				ML.RemoveNote(t,r);
 				message = r.to_string();

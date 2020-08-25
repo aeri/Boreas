@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+
 #include <iostream>
 #include <queue>
 #include <sstream>
@@ -5,7 +25,7 @@
 #include <regex>
 #include <thread>
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -20,7 +40,7 @@ bool STOP = false;
 const int N = 100000;
 const int MAX_ATTEMPS = 50;
 const char MENS_FIN[] = "END OF SERVICE";
-regex e ("(?:ReadN|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
+regex e ("(?:RD|RX|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
 
 
 void capturarSIGINT(int s){
@@ -118,7 +138,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				char* operacion = strtok (message,":");
 				char* tupla = strtok (NULL, ":");
 				int ssize = tamanyo(tupla);
-				Tupla t (ssize);
+				Tuple t (ssize);
 				t.from_string(tupla);
 
 			    cout << "info: operation detected: " << operacion << endl;
@@ -146,7 +166,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    out = true;  // Salir del bucle
 				    break;
 				}
-
 			    
 			    int send_bytes = serverX.Send(descriptor, buffer);
 			    if(send_bytes <= 0)
@@ -158,6 +177,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    break;
 				}
 
+				//TIME PROBLEM
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
 
 			    if(read_bytes <= 0)
@@ -169,6 +189,9 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    out = true;
 				    break;
 				}
+
+
+
 
 			    send_bytes = soc.Send(client_fd, buffer);
 

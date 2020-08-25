@@ -1,13 +1,20 @@
-#*****************************************************************
-# File:   Makefile_p5_e1
-# Author: PSCD-Unizar
-# Date:   octubre 2018
-# Coms:   Ejemplo de Makefile para la práctica 5 de PSCD
-#         "make -f Makefile_p5_e1" construye todos los ejecutables
-#         "make -f Makefile_p5_e1 Cliente" construye "Cliente"
-#         ....
-#         Es necesario descomentar la línea 28 para poder compilar en hendrix
-#*****************************************************************
+
+# Copyright (c) 2020 Naval Alcalá
+# Copyright (c) 2020 Rubén Rodríguez
+#
+# This file is part of Boreas.
+# Boreas is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Boreas is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
 
 #---------------------------------------------------------
 CC=g++
@@ -18,11 +25,10 @@ MONITOR=monitorLinda
 CLIENT=example
 OCLIENT=clienteInteractivo
 MIXTO=clienteMixto
-TEST=test
 BRUTA=bruteforce
 #Fin de clientes
 SERVER=servidorLinda
-TUPLAS=tuplas
+TUPLAS=Tuple
 SERVEI=servei
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
@@ -30,7 +36,7 @@ SOCKET=${SOCKET_DIR}/Socket
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${TEST} ${BRUTA} ${MIXTO}
+all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${BRUTA} ${MIXTO}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -81,15 +87,6 @@ ${BRUTA}.o: ${BRUTA}.cpp
 ${BRUTA}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o  
 	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o -o ${BRUTA} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
-# TESTEO
-# Compilacion
-${TEST}.o: ${TEST}.cpp
-	${CC} -c ${CPPFLAGS} ${TEST}.cpp
-
-# Linkado
-${TEST}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${TEST}.o -o ${TEST} ${SOCKETSFLAGS}
-#-----------------------------------------------------------
 # OTROCLIENTE
 # Compilacion
 ${OCLIENT}.o: ${OCLIENT}.cpp
@@ -133,7 +130,6 @@ clean:
 	$(RM) ${TUPLAS}.o
 	$(RM) ${CLIENT} ${CLIENT}.o
 	$(RM) ${BRUTA} ${BRUTA}.o
-	$(RM) ${TEST} ${TEST}.o
 	$(RM) ${MIXTO} ${MIXTO}.o
 	$(RM) ${OCLIENT} ${OCLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o

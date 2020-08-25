@@ -1,14 +1,24 @@
-//*****************************************************************
-// File:   bruteforce.cpp
-// Author: PSCD-Unizar
-// Date:   agosto 2020
-// Coms:   Esqueleto para prueba del TP-6
-//         invocar mediante
-//            mainLindaDriver IP_LindaServer Port_LindaServer ...
-//*****************************************************************
+/*
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include <string>
 
 using namespace std;
@@ -35,7 +45,7 @@ int main(int argc, char* argv[])
     //int dimension = rand() % 6 + 1;
     
     string entrada;
-    Tupla ttp(6);
+    Tuple ttp(6);
     string start="[a,b,c,d,e,";
     string stop="]";
     

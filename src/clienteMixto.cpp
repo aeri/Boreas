@@ -1,16 +1,24 @@
 /*
- * ----------------------------------------------------------
- * -- Programación de sistemas concurrentes y distribuidos --
- * -- Trabajo práctico : Servidor Linda ---------------------
- * -- Autores y NIP -----------------------------------------
- * -- Daniel Naval Alcalá  739274 ---------------------------
- * -- Alejandro Omist Casado 737791 -------------------------
- * -- Rubén Rodríguez Esteban 737215 ------------------------
- * -- José Manuel Romero Clavería 740914 --------------------
- * ----------------------------------------------------------
+ * Copyright (c) 2020 Naval Alcalá
+ * Copyright (c) 2020 Rubén Rodríguez
+ *
+ * This file is part of Boreas.
+ * Boreas is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Boreas is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
@@ -112,7 +120,7 @@ int main(int argc, char* argv[]){
     string valor;
 
     // Constructor de la tupla
-    Tupla t(dimension);
+    Tuple t(dimension);
 
     cout << "dimension: " << dimension << endl;
     cout << "codigo op: " << codigo_OP << endl;
@@ -206,7 +214,7 @@ int main(int argc, char* argv[]){
               break;
         case 2:
               cout << "Cliente Mixto realiza ReadNote de " << t.to_string() << endl;
-              cout << "Se devuelve: " << LindaDriver.ReadN(t).to_string() << endl;
+              cout << "Se devuelve: " << LindaDriver.RD(t).to_string() << endl;
               break;
         default:
               cerr << " Error en el codigo de operacion" << endl;
