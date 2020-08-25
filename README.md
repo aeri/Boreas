@@ -17,7 +17,7 @@
 An implementation in C++ of coordination language Linda in a distributed way, to be used in programming concurrent and distributed systems.
 
 ## How it works?
-The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **RD** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
+The objective of the project is to carry out a distributed implementation of the Linda coordination system. The system provides the operations: **PN** (post note), **RN** (remove note) and **RD/RX** (read note). For simplicity, the tuples will be flat, that is to say, there are no tuples where one of their elements is another tuple (nested tuples), they will have a maximum length of 6 elements and all the elements will be of string type.
 
 * **PN** *(out)*: Produces a tuple, writing it into tuplespace.
 * **RN** *(in)*: Atomically reads and removes (consumes) a tuple from tuplespace. 
@@ -149,4 +149,4 @@ See the list of [contributors](https://github.com/aeri/Boreas/graphs/contributor
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](COPYING) file for details
