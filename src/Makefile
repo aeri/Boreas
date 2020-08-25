@@ -22,7 +22,7 @@ TEST=test
 BRUTA=bruteforce
 #Fin de clientes
 SERVER=servidorLinda
-TUPLAS=tuplas
+TUPLAS=Tuple
 SERVEI=servei
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket

@@ -15,7 +15,7 @@
  */
 
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include "monitorLinda.hpp"
 #include <iostream>
 #include <thread>
@@ -94,7 +94,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			char* operacion = strtok (buffer,":");
 			char* tupla = strtok (NULL, ":");
 			int ssize = tamanyo(tupla);
-			Tupla t (ssize);
+			Tuple t (ssize);
 			t.from_string(tupla);
 			cout << "info: decoded operation: " << operacion << endl;
 			cout << "info: decoded tuple: " << tupla << endl;
@@ -110,7 +110,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 
 			else if (strcmp(operacion,"RD" )== 0){
 				// La operacion es ReadNote
-				Tupla r (ssize);
+				Tuple r (ssize);
 				// Ejecución de la operación del monitor
 				ML.ReadNote(t,r, true);
 				message = r.to_string();
@@ -119,7 +119,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 
 			else if ( strcmp(operacion,"RX" )== 0){
 				// La operacion es ReadNote
-				Tupla r (ssize);
+				Tuple r (ssize);
 				// Ejecución de la operación del monitor
 				ML.ReadNote(t,r, false);
 				message = r.to_string();
@@ -135,7 +135,7 @@ void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 			}
 			else if (strcmp(operacion,"RN") == 0){
 				// La operación es RemoveNote
-				Tupla r (ssize);
+				Tuple r (ssize);
 				// Ejecución de la operación del monitor
 				ML.RemoveNote(t,r);
 				message = r.to_string();

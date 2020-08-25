@@ -21,7 +21,7 @@
 #include <thread>
 #include "LindaDriver.hpp"
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 using namespace std;
 
@@ -81,7 +81,7 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar PostNote 
  */
-void LD::PN(Tupla t)
+void LD::PN(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -112,7 +112,7 @@ void LD::PN(Tupla t)
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar RemoveNote y la devuelve 
  */
-Tupla LD::RN(Tupla t)
+Tuple LD::RN(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -139,7 +139,7 @@ Tupla LD::RN(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-    Tupla r(tamanyo(buffer));
+    Tuple r(tamanyo(buffer));
     r.from_string(buffer);
     return r;
 };
@@ -149,7 +149,7 @@ Tupla LD::RN(Tupla t)
  * Pre:la dimension de <<t>> es >=1 && <=6
  * Post:Ha informado al servidor correspondiente la tupla sobre la que debe ejcutar ReadNote y la devuelve 
  */
-Tupla LD::RD(Tupla t)
+Tuple LD::RD(Tuple t)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -176,12 +176,12 @@ Tupla LD::RD(Tupla t)
 	    // Cerramos los sockets
 	    Close(socket_fd);
 	}
-    Tupla r(tamanyo(buffer));
+    Tuple r(tamanyo(buffer));
     r.from_string(buffer);
     return r;
 };
 
-Tupla LD::RX(Tupla t, bool& found)
+Tuple LD::RX(Tuple t, bool& found)
 {
     const int MESSAGE_SIZE = 4001;
 
@@ -201,7 +201,7 @@ Tupla LD::RX(Tupla t, bool& found)
     string buffer;
     int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
-    Tupla r(tamanyo(buffer));
+    Tuple r(tamanyo(buffer));
 
     if(read_bytes == -1)
 	{

@@ -8,7 +8,7 @@
 //*****************************************************************
 
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include <string>
 
 using namespace std;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     //int dimension = rand() % 6 + 1;
     
     string entrada;
-    Tupla ttp(6);
+    Tuple ttp(6);
     string start="[a,b,c,d,e,";
     string stop="]";
     

@@ -11,7 +11,7 @@
  */
 
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 #include <chrono>
 
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
 		    
 		    // Constructor de la tupla
-		    Tupla tta(dimension);
+		    Tuple tta(dimension);
 		   
 		    for (int i = 1; i <=dimension; i++){
 			

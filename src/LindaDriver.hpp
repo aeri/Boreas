@@ -20,7 +20,7 @@
 #include <cstring>
 #include <iostream>
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 class LD : public Socket
 {
@@ -30,10 +30,10 @@ class LD : public Socket
 
    public:
     LD(string ip, string p); //constructor 
-    void PN(Tupla t); //PostNote
-    Tupla RN(Tupla t); //RemoveNote
-    Tupla RD(Tupla t); //ReadNote
-    Tupla RX(Tupla t, bool& found); //ReadNote
+    void PN(Tuple t); //PostNote
+    Tuple RN(Tuple t); //RemoveNote
+    Tuple RD(Tuple t); //ReadNote
+    Tuple RX(Tuple t, bool& found); //ReadNote
     void STOP();//cierra la conexión del socket
 };
 

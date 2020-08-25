@@ -107,7 +107,7 @@ bool sonIguales(string a, string b) {
  * Pre: La dimensión de la tupla t es >=1 && <=6
  * Post: Añade a la matriz correspondiente la tupla t
  */
-void MonitorLinda::PostNote(Tupla t){
+void MonitorLinda::PostNote(Tuple t){
     unique_lock<mutex> lck(mtxMonitor);
    
 
@@ -208,7 +208,7 @@ void MonitorLinda::PostNote(Tupla t){
  * Post: Busca la tupla t en la matriz correspondiente, la guarda en la tupla <<r>> y la borra
  *       de la matriz de tuplas correspondiente
  */
-void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
+void MonitorLinda::RemoveNote(Tuple t, Tuple& r){
     unique_lock<mutex> lck(mtxMonitor);
 
     // Punteros auxiliares
@@ -397,7 +397,7 @@ void MonitorLinda::RemoveNote(Tupla t, Tupla& r){
  *Post:Busca la tupla t en la matriz correspondiente y actualiza el valor de dicha tupla
  */
 
-void MonitorLinda::ReadNote(Tupla t, Tupla& r, bool locked){
+void MonitorLinda::ReadNote(Tuple t, Tuple& r, bool locked){
 
     unique_lock<mutex> lck(mtxMonitor);
 

@@ -5,7 +5,7 @@
 #include <regex>
 #include <thread>
 #include "Socket.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -118,7 +118,7 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				char* operacion = strtok (message,":");
 				char* tupla = strtok (NULL, ":");
 				int ssize = tamanyo(tupla);
-				Tupla t (ssize);
+				Tuple t (ssize);
 				t.from_string(tupla);
 
 			    cout << "info: operation detected: " << operacion << endl;

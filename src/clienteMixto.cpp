@@ -10,7 +10,7 @@
  * ----------------------------------------------------------
  */
 #include "LindaDriver.hpp"
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]){
     string valor;
 
     // Constructor de la tupla
-    Tupla t(dimension);
+    Tuple t(dimension);
 
     cout << "dimension: " << dimension << endl;
     cout << "codigo op: " << codigo_OP << endl;

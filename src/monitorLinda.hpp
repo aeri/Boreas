@@ -22,7 +22,7 @@
 #include <mutex>
 #include <queue>
 #include <string>
-#include "tuplas.hpp"
+#include "Tuple.hpp"
 #include "Socket.hpp"
 
 using namespace std;
@@ -67,10 +67,10 @@ class MonitorLinda
 
        ~MonitorLinda(); // Destrutor
 
-      void PostNote(Tupla t); //Añade una tupla al espacio de tuplas
+      void PostNote(Tuple t); //Añade una tupla al espacio de tuplas
 
-      void RemoveNote(Tupla t, Tupla& r);  //Busca una tupla, toma su valor y la borra del espacio de tuplas
+      void RemoveNote(Tuple t, Tuple& r);  //Busca una tupla, toma su valor y la borra del espacio de tuplas
 
-      void ReadNote(Tupla t, Tupla& r, bool locked); //Busca una tupla en el espacio de tuplas con un patrón específico
+      void ReadNote(Tuple t, Tuple& r, bool locked); //Busca una tupla en el espacio de tuplas con un patrón específico
 };
 #endif
