@@ -28,6 +28,8 @@ using namespace std;
 
 const int DEFAULT_BUFLEN = 512;
 
+const string NF = "NOT_FOUND";
+
 
 /**
  * Returns the number of components separated by a comma in the string
@@ -331,7 +333,7 @@ Tuple LD::removeNote(Tuple t)
  */
 Tuple LD::readNote(Tuple t)
 {
-    string message = "ReadN:" + t.to_string();
+    string message = "RD:" + t.to_string();
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
@@ -368,6 +370,62 @@ Tuple LD::readNote(Tuple t)
     return r;
 };
 
+
+
+/**
+* Make a readNoteX not locked operation if the Linda tuple space
+* @param t is the tuple to be get if it exists in the tuple space
+* @param found controls if the search has been successfull
+*/  
+Tuple LD::readNoteX(Tuple t, bool& found)
+{
+    string message = "RX:" + t.to_string();
+    char recvbuf[DEFAULT_BUFLEN];
+    int recvbuflen = DEFAULT_BUFLEN;
+    int error;
+
+    sending(message);
+
+    // Receive until the peer closes the connection
+    do
+	{
+	    // Empty and clear the buffer
+	    memset(recvbuf, 0, DEFAULT_BUFLEN);
+
+	    // Receive the response of the server
+        receiving(recvbuf, recvbuflen, error);
+
+	    if(strcmp(recvbuf, "ACK") == 0)
+		{
+		    break;
+		}
+	}
+    while(iResult > 0);
+
+    // Empty and clear the buffer
+    memset(recvbuf, 0, DEFAULT_BUFLEN);
+
+    // Receive the response of the server
+    receiving(recvbuf, recvbuflen, error);
+
+    // Send the ACK
+    const char *ackbuf = "ACK";
+    sending(ackbuf);
+	
+	Tuple r(tamanyo(recvbuf));
+	
+	if(NF.compare(recvbuf) == 0){
+		found = false;
+		r.set(1,NF);
+	}
+	else{
+		found = true;
+		r.from_string(recvbuf);
+		
+	}  
+
+    return r;
+};
 
 
 /**

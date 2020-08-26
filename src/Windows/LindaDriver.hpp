@@ -153,6 +153,15 @@ public:
 
 
 
+    /**
+    * Make a readNoteX not locked operation if the Linda tuple space
+    * @param t is the tuple to be get if it exists in the tuple space
+	* @param found controls if the search has been successfull
+    */  
+   Tuple readNoteX(Tuple t, bool& found);
+
+
+
    /**
     * Close the connection between the Linda driver and the Linda server
     */
