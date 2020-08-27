@@ -250,7 +250,7 @@ int main(int argc, char* argv[])
     if(argc < 8)
 	{
 	    cerr << "Start as:" << endl;
-	    cerr << "   servidorLinda <Port_LS> <IP_S1> <Port_S1> <IP_S2> <Port_S2> <IP_S3> <Port_S3>" << endl;
+	    cerr << "   lindaServer <Port_LS> <IP_S1> <Port_S1> <IP_S2> <Port_S2> <IP_S3> <Port_S3>" << endl;
 	    cerr << "      <Port_LS>: Linda server listen port" << endl;
 	    cerr << "      <IP_S1>: storage server 1 IP address" << endl;
 	    cerr << "      <Port_S1>: storage server 1 port" << endl;

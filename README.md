@@ -90,7 +90,7 @@ The deployment is made in different levels since the system is modular and can b
 * **Linda Server:** The core of this system, the intermediary between clients and distributed tuples storage systems.
 
 ```
-./servidorLinda <Port_LS> <IP_S1> <Port_S1> <IP_S2> <Port_S2> <IP_S3> <Port_S3>
+./lindaServer <Port_LS> <IP_S1> <Port_S1> <IP_S2> <Port_S2> <IP_S3> <Port_S3>
 ```
 ><Port_LS>: Linda server port
 

@@ -116,6 +116,8 @@ int Socket::Connect() {
 	// AF_INET     --> IPv4
 	// SOCK_STREAM --> Comunicación TCP
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	int option = 1;
+	setsockopt(socket_fd, IPPROTO_TCP, TCP_NODELAY, &option, sizeof(option));
 
  	struct hostent *he; // Información del nodo remoto
 	struct sockaddr_in server;  // Información dirección servidor
@@ -166,15 +168,6 @@ int Socket::Recv(int fd, char* buffer, int buffer_length) {
 		return -1;
 	}
 
-	// SEGUNDO: ENVIAMOS ACK
-	
-	char ack[ACK_BUFFER_SIZE];
-
-	bzero(ack, ACK_BUFFER_SIZE);
-	strcpy(ack, "ACK"); 
-
-	send(fd, ack, strlen(ack), 0);
-
 	// Devolvemos número de bytes leídos
 	return num_bytes;
 }
@@ -201,20 +194,6 @@ ssize_t Socket::Send(int fd, const char* message) {
 
 	// PRIMERO ENVIAMOS INFORMACION
 	ssize_t num_bytes = send(fd, message, strlen(message), 0);
-
-	// SEGUNDO: RECIBIMOS ACK
-	// Creamos buffer para ACK 
-	char ack_buffer[ACK_BUFFER_SIZE];
-	bzero(ack_buffer, ACK_BUFFER_SIZE);
-
-	// Leemos todos los datos posibles que quepan en el buffer
-	//Será "ACK"
-	recv(fd, ack_buffer, ACK_BUFFER_SIZE-1, 0);
-
-	// Comprobamos que no haya error enviando el ACK
-	if( 0 != strcmp(ack_buffer,"ACK") ) {
-		num_bytes = -1;
-	}
 
 	return num_bytes;	
 }

@@ -27,7 +27,7 @@ OCLIENT=clienteInteractivo
 MIXTO=clienteMixto
 BRUTA=bruteforce
 #Fin de clientes
-SERVER=servidorLinda
+SERVER=lindaServer
 TUPLAS=Tuple
 SERVEI=servei
 SOCKET_DIR=Socket
