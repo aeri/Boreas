@@ -24,6 +24,7 @@
 #include "LindaDriver.hpp"
 
 using namespace std;
+using namespace std;
 
 
 const int DEFAULT_BUFLEN = 512;
@@ -111,11 +112,20 @@ int LD::solvingAdressingPort(const string ip, const string port){
  * @return
  */
 int LD::connectToServer(){
+	
+	BOOL bOptVal = TRUE;
+	int bOptLen = sizeof(BOOL);
+	
     // Attempt to connect to an address until one succeeds
     for(ptr = result; ptr != NULL; ptr = ptr->ai_next)
 	{
 	    // Create a SOCKET for connecting to server
 	    ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+		
+		if (setsockopt(ConnectSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&bOptVal, bOptLen) == SOCKET_ERROR){
+			printf("FAILED IN TCP_NODELAY\n");
+		}		
+				
 	    if(ConnectSocket == INVALID_SOCKET)
 		{
 		    cerr << "socket failed with error: " << WSAGetLastError() << endl;
@@ -189,9 +199,7 @@ int LD::sending(const string message){
 void LD::receiving(char recvbuf[], const int recvbuflen, int& error){
     iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
     if (iResult > 0){
-        if (strcmp(recvbuf, "ACK") != 0){
-            cout << recvbuf << endl;
-        }
+        cout << recvbuf << endl;
         error = 0;
     }
     else if (iResult == 0){
@@ -253,31 +261,11 @@ void LD::postNote(Tuple t)
     // Send the tuple to be postnoted
     sending(message);
 
-    // Receive until the peer closes the connection
-    do
-	{
-	    // Empty and clear the buffer
-	    memset(recvbuf, 0, DEFAULT_BUFLEN);
-
-        // Receive the response of the server
-        receiving(recvbuf, recvbuflen, error);
-
-	    if(strcmp(recvbuf, "ACK") == 0)
-		{
-		    break;
-		}
-	}
-    while(iResult > 0);
-
     // Empty and clear the buffer
     memset(recvbuf, 0, DEFAULT_BUFLEN);
 
     // Receive the response of the server
     receiving(recvbuf, recvbuflen, error);
-
-    // Send the ACK
-    const char *ackbuf = "ACK";
-    sending(ackbuf);
 };
 
 
@@ -295,31 +283,12 @@ Tuple LD::removeNote(Tuple t)
 
     sending(message);
 
-    // Receive until the peer closes the connection
-    do
-	{
-	    // Empty and clear the buffer
-	    memset(recvbuf, 0, DEFAULT_BUFLEN);
-
-	    // Receive the response of the server
-        receiving(recvbuf, recvbuflen, error);
-
-	    if(strcmp(recvbuf, "ACK") == 0)
-		{
-		    break;
-		}
-	}
-    while(iResult > 0);
-
     // Empty and clear the buffer
     memset(recvbuf, 0, DEFAULT_BUFLEN);
 
     // Receive the response of the server
     receiving(recvbuf, recvbuflen, error);
 
-    // Send the ACK
-    const char *ackbuf = "ACK";
-    sending(ackbuf);
     Tuple r(tamanyo(recvbuf));
     r.from_string(recvbuf);
     return r;
@@ -340,31 +309,12 @@ Tuple LD::readNote(Tuple t)
 
     sending(message);
 
-    // Receive until the peer closes the connection
-    do
-	{
-	    // Empty and clear the buffer
-	    memset(recvbuf, 0, DEFAULT_BUFLEN);
-
-	    // Receive the response of the server
-        receiving(recvbuf, recvbuflen, error);
-
-	    if(strcmp(recvbuf, "ACK") == 0)
-		{
-		    break;
-		}
-	}
-    while(iResult > 0);
-
     // Empty and clear the buffer
     memset(recvbuf, 0, DEFAULT_BUFLEN);
 
     // Receive the response of the server
     receiving(recvbuf, recvbuflen, error);
 
-    // Send the ACK
-    const char *ackbuf = "ACK";
-    sending(ackbuf);
     Tuple r(tamanyo(recvbuf));
     r.from_string(recvbuf);
     return r;
@@ -386,31 +336,11 @@ Tuple LD::readNoteX(Tuple t, bool& found)
 
     sending(message);
 
-    // Receive until the peer closes the connection
-    do
-	{
-	    // Empty and clear the buffer
-	    memset(recvbuf, 0, DEFAULT_BUFLEN);
-
-	    // Receive the response of the server
-        receiving(recvbuf, recvbuflen, error);
-
-	    if(strcmp(recvbuf, "ACK") == 0)
-		{
-		    break;
-		}
-	}
-    while(iResult > 0);
-
     // Empty and clear the buffer
     memset(recvbuf, 0, DEFAULT_BUFLEN);
 
     // Receive the response of the server
     receiving(recvbuf, recvbuflen, error);
-
-    // Send the ACK
-    const char *ackbuf = "ACK";
-    sending(ackbuf);
 	
 	Tuple r(tamanyo(recvbuf));
 	
