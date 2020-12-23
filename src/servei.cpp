@@ -72,7 +72,7 @@ int tamanyo(string s)
 void servCliente(Socket& soc, int client_fd, MonitorLinda& ML) {
 	char MENS_FIN[]="END OF SERVICE";
 	// Buffer para recibir el mensaje
-	int length = 100;
+	int length = 512;
 	char buffer[length];
 
 	bool out = false; // Inicialmente no salir del bucle

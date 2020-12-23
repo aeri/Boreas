@@ -29,10 +29,20 @@
 #include "LindaDriver.hpp"
 #include "Socket.hpp"
 #include "Tuple.hpp"
+#include <AES/AES.hpp>
+//#include "base64/base64.h"
 
 using namespace std;
 
 string nf ("NOT_FOUND");
+
+int string_size(char * str)
+{
+    int Size = 0;
+    while (str[Size] != '\0') Size++;
+    return Size;
+}
+
 
 /*
  * Pre: <<s>> es un string que representa una tupla cuyas componentes están sepradas por comas
@@ -83,6 +93,13 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p))
 	}
 };
 
+int string_size(unsigned char * str)
+{
+    int Size = 0;
+    while (str[Size] != '\0') Size++;
+    return Size;
+}
+
 
 /*
  * Pre:la dimension de <<t>> es >=1 && <=6
@@ -94,7 +111,29 @@ void LD::PN(Tuple t)
 
     string message = "PN:" + t.to_string();
 
-    int send_bytes = Send(socket_fd, message);
+    //message.resize(128, '\0');
+
+    unsigned char data[message.length() + 1];
+    copy(message.data(), message.data() + message.length() + 1, data);
+	//copy( message.begin(), message.end(), data );
+	
+	cout << data << endl;
+	
+	
+	unsigned char key[] = { 0xf0, 0x8b, 0x82, 0xff, 0xee, 0xef, 0x76, 0x67, 0xfa, 0xaf, 0xfa, 0x0f, 0x5c, 0x7d, 0x8e, 0xbe }; //key example
+	unsigned char iv[] =  { 0xfa, 0xfa, 0xfa, 0xfa, 0xbe, 0xba, 0xca, 0xfe, 0xee, 0xaa, 0x11, 0xb4, 0xc7, 0xe1, 0xf1, 0xaa };
+	unsigned int plainLen = string_size(data) * sizeof(unsigned char);  //bytes in plaintext
+	unsigned int outLen = 0;  // out param - bytes in сiphertext
+
+	AES aes(128);  //128 - key length, can be 128, 192 or 256
+	unsigned char* c = aes.EncryptCBC(data, plainLen + 1, key, iv, outLen);
+
+	//cout << "Dec bytes str: " << message.size() << endl;
+	//cout << "Dec bytes: " << plainLen << endl;
+	//cout << "Cod bytes: " << outLen << endl;
+
+    int send_bytes = Send(socket_fd, c, outLen);
+
 
 
     if(send_bytes == -1)

@@ -171,6 +171,24 @@ int Socket::Recv(int fd, char* buffer, int buffer_length) {
 	// Devolvemos número de bytes leídos
 	return num_bytes;
 }
+int Socket::Recv(int fd, unsigned char* buffer, int buffer_length) {
+
+	// PRIMERO: RECIBIMOS INFORMACION
+	// Limpiamos el buffer
+	bzero(buffer, buffer_length);
+	
+	// Leemos todos los datos posibles que quepan en el buffer
+	int num_bytes = recv(fd, buffer, buffer_length, 0);
+
+	if (num_bytes == -1) {
+		cerr << "sock-error: failure to receive data from the socket\n";
+		close(fd);
+		return -1;
+	}
+
+	// Devolvemos número de bytes leídos
+	return num_bytes;
+}
 //-------------------------------------------------------------
 int Socket::Recv(int fd, string &buffer, int buffer_length) {
 	buffer = ""; //vaciar
@@ -194,6 +212,14 @@ ssize_t Socket::Send(int fd, const char* message) {
 
 	// PRIMERO ENVIAMOS INFORMACION
 	ssize_t num_bytes = send(fd, message, strlen(message), 0);
+
+	return num_bytes;	
+}
+//-------------------------------------------------------------
+ssize_t Socket::Send(int fd, const unsigned char* message, const int len) {
+
+	// PRIMERO ENVIAMOS INFORMACION
+	ssize_t num_bytes = send(fd, message, len, 0);
 
 	return num_bytes;	
 }

@@ -32,6 +32,7 @@ TUPLAS=Tuple
 SERVEI=servei
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
+AES=AES/AES
 
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
@@ -57,8 +58,8 @@ ${DRIVER}.o: ${DRIVER}.hpp ${DRIVER}.cpp
 	${CC} -c ${CPPFLAGS} ${DRIVER}.cpp
 
 # Linkado
-${DRIVER}: ${TUPLAS}.o ${SOCKET}.o ${DRIVER}.o  
-	${CC} ${LDFLAGS} ${TUPLAS}.o ${SOCKET}.o ${DRIVER}.o -o ${DRIVER} ${SOCKETSFLAGS}
+${DRIVER}: ${AES}.o ${TUPLAS}.o ${SOCKET}.o ${DRIVER}.o  
+	${CC} ${LDFLAGS} ${AES}.o ${TUPLAS}.o ${SOCKET}.o ${DRIVER}.o -o ${DRIVER} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # CLIENTE
 # Compilacion
@@ -66,8 +67,8 @@ ${CLIENT}.o: ${CLIENT}.cpp
 	${CC} -c ${CPPFLAGS} ${CLIENT}.cpp
 
 # Linkado
-${CLIENT}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o -o ${CLIENT} ${SOCKETSFLAGS}
+${CLIENT}: ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${CLIENT}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${CLIENT}.o -o ${CLIENT} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # MIXTO
 # Compilacion
@@ -75,8 +76,8 @@ ${MIXTO}.o: ${MIXTO}.cpp
 	${CC} -c ${CPPFLAGS} ${MIXTO}.cpp
 
 # Linkado
-${MIXTO}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${MIXTO}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${MIXTO}.o -o ${MIXTO} ${SOCKETSFLAGS}
+${MIXTO}: ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${MIXTO}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${MIXTO}.o -o ${MIXTO} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # BRUTA
 # Compilacion
@@ -84,8 +85,8 @@ ${BRUTA}.o: ${BRUTA}.cpp
 	${CC} -c ${CPPFLAGS} ${BRUTA}.cpp
 
 # Linkado
-${BRUTA}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o -o ${BRUTA} ${SOCKETSFLAGS}
+${BRUTA}: ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${BRUTA}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${BRUTA}.o -o ${BRUTA} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # OTROCLIENTE
 # Compilacion
@@ -93,8 +94,8 @@ ${OCLIENT}.o: ${OCLIENT}.cpp
 	${CC} -c ${CPPFLAGS} ${OCLIENT}.cpp
 
 # Linkado
-${OCLIENT}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${OCLIENT}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${OCLIENT}.o -o ${OCLIENT} ${SOCKETSFLAGS}
+${OCLIENT}: ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${OCLIENT}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${OCLIENT}.o -o ${OCLIENT} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SERVIDOR
 # Compilacion
@@ -103,7 +104,7 @@ ${SERVER}.o: ${SERVER}.cpp
 
 # Linkado
 ${SERVER}: ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o
-	${CC} ${LDFLAGS} ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
+	${CC} ${LDFLAGS} ${TUPLAS}.o ${AES}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SERVEI
 # Compilacion
@@ -123,6 +124,11 @@ ${SOCKET}.o: ${SOCKET}.hpp ${SOCKET}.cpp
 # Compilacion
 ${TUPLAS}.o: ${TUPLAS}.hpp  ${TUPLAS}.cpp 
 	${CC} -c ${CPPFLAGS} ${TUPLAS}.cpp -o ${TUPLAS}.o
+#-----------------------------------------------------------
+# AES
+# Compilacion
+${AES}.o: ${AES}.hpp  ${AES}.cpp 
+	${CC} -c ${CPPFLAGS} ${AES}.cpp -o ${AES}.o
 #-----------------------------------------------------------		
 # LIMPIEZA
 clean:
@@ -136,3 +142,4 @@ clean:
 	$(RM) ${SERVEI} ${SERVEI}.o
 	$(RM) ${DRIVER} ${DRIVER}.o
 	$(RM) ${MONITOR} ${MONITOR}.o
+	$(RM) ${AES} ${AES}.o

@@ -107,6 +107,7 @@ public:
 	// Devuelve el numero de bytes leídos en caso de éxito.
 	// Devuelve -1 en caso de error.
 	int Recv(int fd, char* buffer, int buffer_length);
+	int Recv(int fd, unsigned char* buffer, int buffer_length);
 	int Recv(int fd, string &buffer, int buffer_length);
 
 	// Envía información a através del socket abierto
@@ -118,6 +119,7 @@ public:
 	// Devuelve el número de bytes enviados en caso de éxito.
 	// Devuelve -1 en caso de error.
 	ssize_t Send(int fd, const char* message);
+	ssize_t Send(int fd, const unsigned char* message, const int len);
 	ssize_t Send(int fd, const string message); 
 };
 

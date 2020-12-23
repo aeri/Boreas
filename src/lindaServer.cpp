@@ -19,6 +19,7 @@
 
 
 #include <iostream>
+#include <iomanip>
 #include <queue>
 #include <sstream>
 #include <string>
@@ -26,6 +27,7 @@
 #include <thread>
 #include "Socket.hpp"
 #include "Tuple.hpp"
+#include "AES/AES.hpp"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -102,10 +104,11 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 	    // Buffer para recibir el mensaje
 	    // char MENS_FIN[] = "END OF SERVICE";
 	    // Buffer para recibir el mensaje
-	    int length = 200;
-	    char message[length];
+	    int length = 128;
+	    unsigned char message[length];
 	    char buffer[length];
 
+	    
 	    string operation;
 
 	    bool out = false;  // Inicialmente no salir del bucle
@@ -128,14 +131,28 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 			    break;
 			}
 
-			message[rcv_bytes] = '\0';
+				AES aes(128);  //128 - key length, can be 128, 192 or 256
 
-	  		if (regex_match (message,e)){
-	  			cout << "info: string message matched: " << message << endl;
+				unsigned char key[] = { 0xf0, 0x8b, 0x82, 0xff, 0xee, 0xef, 0x76, 0x67, 0xfa, 0xaf, 0xfa, 0x0f, 0x5c, 0x7d, 0x8e, 0xbe }; //key example
+				unsigned char iv[] =  { 0xfa, 0xfa, 0xfa, 0xfa, 0xbe, 0xba, 0xca, 0xfe, 0xee, 0xaa, 0x11, 0xb4, 0xc7, 0xe1, 0xf1, 0xaa };
 
-				strncpy(buffer,message,length);
+
+				unsigned char* decode = aes.DecryptCBC(message, 128, key, iv);
+
+				string lean(reinterpret_cast<char*>(decode));
+
+				char decrypt[lean.size() + 1];
+				strcpy(decrypt, lean.c_str());	// or pass &s[0]
+
+				cout << "debug: server resolves with: " << lean << endl;
+
+
+	  		if (regex_match (decrypt,e)){
+	  			cout << "info: string message matched: " << decrypt << endl;
+
+				strncpy(buffer,decrypt,length);
 				
-				char* operacion = strtok (message,":");
+				char* operacion = strtok (decrypt,":");
 				char* tupla = strtok (NULL, ":");
 				int ssize = tamanyo(tupla);
 				Tuple t (ssize);
@@ -177,7 +194,6 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				    break;
 				}
 
-				//TIME PROBLEM
 			    int read_bytes = serverX.Recv(descriptor, buffer, length);
 
 			    if(read_bytes <= 0)
@@ -204,16 +220,17 @@ void servCliente(Socket& soc, int client_fd, string ip1, int p1, string ip2, int
 				}
 
 	  		}
-	  		else if (strncmp(message,MENS_FIN, length) == 0){
+	  		else if (strncmp(decrypt,MENS_FIN, length) == 0){
 	  			cout << "info: end of service requested" << endl;
 			    out = true;  // Salir del bucle
 			    break;
 	  		}
 	  		else{
-	  			cerr << "error: operation not recognized" << endl;
+	  			cerr << "error: operation not decoded" << endl;
 	  			out = true;  // Salir del bucle
 				break;
 	  		}
+	  		
 			    
 			
 		}
