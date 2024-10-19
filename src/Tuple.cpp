@@ -134,7 +134,7 @@ void Tuple::from_string(string t) {
 
   if (incorrect) {
     // Shows an error in the format of the tuple
-    cerr << "El formato de entrada es incorrecto" << endl;
+    cerr << "incorrect tuple input format" << endl;
   }
 };
 

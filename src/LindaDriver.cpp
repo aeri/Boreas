@@ -57,15 +57,15 @@ LD::LD(string ip, string p) : Socket(ip, stoi(p)) {
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe
  * ejcutar PostNote
  */
-void LD::PN(Tuple t) {
+void LD::OUT(Tuple t) {
   const int MESSAGE_SIZE = 4001;
 
-  string message = "PN:" + t.to_string();
+  string message = "OUT:" + t.to_string();
 
   int send_bytes = Send(socket_fd, message);
 
   if (send_bytes == -1) {
-    cerr << "Error at PN SEND: " << strerror(errno) << endl;
+    cerr << "Error at OUT SEND: " << strerror(errno) << endl;
     // Cerramos el socket
     Close(socket_fd);
     exit(1);
@@ -76,7 +76,7 @@ void LD::PN(Tuple t) {
   int read_bytes = Recv(socket_fd, buffer, MESSAGE_SIZE);
 
   if (read_bytes <= 0) {
-    cerr << "Error at PN ACK" << endl;
+    cerr << "Error at OUT ACK" << endl;
   }
 };
 
@@ -85,15 +85,15 @@ void LD::PN(Tuple t) {
  * Post: Ha informado al servidor correspondiente la tupla sobre la que debe
  * ejcutar RemoveNote y la devuelve
  */
-Tuple LD::RN(Tuple t) {
+Tuple LD::IN(Tuple t) {
   const int MESSAGE_SIZE = 4001;
 
-  string message = "RN:" + t.to_string();
+  string message = "IN:" + t.to_string();
 
   int send_bytes = Send(socket_fd, message);
 
   if (send_bytes == -1) {
-    cerr << "Error at RN SEND: " << strerror(errno) << endl;
+    cerr << "Error at IN SEND: " << strerror(errno) << endl;
     // Cerramos el socket
     Close(socket_fd);
     exit(1);
@@ -105,7 +105,7 @@ Tuple LD::RN(Tuple t) {
 
   if (read_bytes == -1) {
     string mensError(strerror(errno));
-    cerr << "Error at RN RESPONSE: " + mensError + "\n";
+    cerr << "Error at IN RESPONSE: " + mensError + "\n";
     // Cerramos los sockets
     Close(socket_fd);
   }
@@ -148,15 +148,15 @@ Tuple LD::RD(Tuple t) {
   return r;
 };
 
-Tuple LD::RX(Tuple t, bool &found) {
+Tuple LD::RDP(Tuple t, bool &found) {
   const int MESSAGE_SIZE = 4001;
 
-  string message = "RX:" + t.to_string();
+  string message = "RDP:" + t.to_string();
 
   int send_bytes = Send(socket_fd, message);
 
   if (send_bytes == -1) {
-    cerr << "Error at RD SEND: " << strerror(errno) << endl;
+    cerr << "Error at RDP SEND: " << strerror(errno) << endl;
     // Cerramos el socket
     Close(socket_fd);
     exit(1);
@@ -170,7 +170,7 @@ Tuple LD::RX(Tuple t, bool &found) {
 
   if (read_bytes == -1) {
     string mensError(strerror(errno));
-    cerr << "Error at RD RESPONSE: " + mensError + "\n";
+    cerr << "Error at RDP RESPONSE: " + mensError + "\n";
     // Cerramos los sockets
     Close(socket_fd);
   }

@@ -22,10 +22,10 @@
 #include "monitorLinda.hpp"
 
 bool STOP = false;
-string nf("NOT_FOUND");
+string NOT_FOUND_ERROR("NOT_FOUND");
 
 const char FIN_MSG[] = "END OF SERVICE";
-regex e("(?:RD|RX|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
+regex e("(?:OUT|IN|RD|RDP):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
 
 int getTupleDimension(string s) {
   stringstream ss(s);
@@ -45,12 +45,13 @@ void handleSIGINT(int s) {
 
 void handleClient(int clientSocket, MonitorLinda &ML) {
 
-  int length = 200;
+  int length = 1024;
   char buffer[1024] = {0};
 
   bool out = false;
   while (!out) {
-    int bytesRead = read(clientSocket, buffer, 1024);
+    bzero(buffer, length);
+    int bytesRead = read(clientSocket, buffer, length);
     if (bytesRead > 0) {
 
       string request(buffer);
@@ -73,7 +74,7 @@ void handleClient(int clientSocket, MonitorLinda &ML) {
 
         // Operation processing
 
-        if (operation == "PN") {
+        if (operation == "OUT") {
           ML.PostNote(t);
           response = "OK";
         }
@@ -85,27 +86,27 @@ void handleClient(int clientSocket, MonitorLinda &ML) {
           cout << "info: RD resolves with: " << operation << endl;
         }
 
-        else if (operation == "RX") {
+        else if (operation == "RDP") {
           Tuple r(ssize);
           ML.ReadNote(t, r, false);
           response = r.to_string();
 
-          if (r.get(1).compare(nf) == 0) {
-            response = nf;
+          if (r.get(1).compare(NOT_FOUND_ERROR) == 0) {
+            response = NOT_FOUND_ERROR;
           } else {
             response = r.to_string();
           }
 
-          cout << "info: RX resolves with: " << response << endl;
-        } else if (operation == "RN") {
+          cout << "info: RDP resolves with: " << response << endl;
+        } else if (operation == "IN") {
           Tuple r(ssize);
           ML.RemoveNote(t, r);
           response = r.to_string();
-          cout << "info: RN resolves with: " << response << endl;
+          cout << "info: IN resolves with: " << response << endl;
         }
         // client response stored in <<response>>
-        // IF Postnote sends OK
-        // IF ReadNote or RemoveNote sends requested tuple
+        // IF OUT sends OK
+        // IF RD or IN sends requested tuple
         int send_bytes =
             send(clientSocket, response.c_str(), response.length(), 0);
 
@@ -117,14 +118,22 @@ void handleClient(int clientSocket, MonitorLinda &ML) {
           exit(1);
         }
 
-        cout << "sent bytes " << send_bytes << endl;
+        int error = 0;
+        socklen_t len = sizeof(error);
+        if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, &error, &len) == -1) {
+            std::cerr << "error: retrieving socket: " << strerror(errno) << std::endl;
+        }
+
+        if (error != 0) {
+            std::cerr << "error: after send: " << strerror(error) << std::endl;
+        }
       }
 
       else if (strncmp(buffer, FIN_MSG, length) == 0) {
         cout << "info: end of service requested" << endl;
         out = true;
       } else {
-        cerr << "error: operation not recognized" << endl;
+        cerr << "error: operation not recognized " << request << endl;
         out = true;
       }
     }

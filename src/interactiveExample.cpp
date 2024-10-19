@@ -2,11 +2,14 @@
 #include "Tuple.hpp"
 
 #include <chrono>
+#include <cstdlib>
 #include <signal.h>
 
 const int MAX_LONG_LINEA = 128;
 
 using namespace std;
+bool stop = false;
+
 
 /*
  * Pre: ---
@@ -15,15 +18,17 @@ using namespace std;
  */
 void presentarMenu() {
   cout << "Interactive example" << endl;
-  cout << "1. PN" << endl;
-  cout << "2. RM" << endl;
+  cout << "1. OUT" << endl;
+  cout << "2. IN" << endl;
   cout << "3. RD" << endl;
-  cout << "4. RX" << endl;
+  cout << "4. RDP" << endl;
   cout << "0. STOP" << endl;
 }
 
 void handleSIGINT(int s) {
   cout << endl << "info: signal " << s << " handled." << endl;
+  stop = true;
+  exit(0);
 }
 
 /*
@@ -43,7 +48,7 @@ int main(int argc, char *argv[]) {
   if (argc < 2) {
     cerr << "Start as:" << endl;
     cerr << "   interactiveExample <IP_LS> <Port_LS>" << endl;
-    cerr << "      <IP_LS>: IP address from Linda server" << endl;
+    cerr << "      <IP_LS>: Linda server IP address" << endl;
     cerr << "      <Port_LS>: Linda server listen port" << endl;
     return 1;
   }
@@ -58,7 +63,6 @@ int main(int argc, char *argv[]) {
   // La conexión con el servidor Linda ya está establecida
   cout << "Connected to server " << argv[1] << " successfully." << endl;
 
-  bool stop = false;
   int operation;
   int dimension;
 
@@ -102,9 +106,9 @@ int main(int argc, char *argv[]) {
 
       if (operation == 1) {
         // el usuario pide hacer PostNote
-        cout << "PostNote of " << tta.to_string() << endl;
+        cout << "OUT of " << tta.to_string() << endl;
         auto init = chrono::system_clock::now();
-        LindaDriver.PN(tta);
+        LindaDriver.OUT(tta);
         auto end = chrono::system_clock::now();
         auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - init);
 
@@ -112,9 +116,9 @@ int main(int argc, char *argv[]) {
              << " milliseconds." << endl;
       } else if (operation == 2) {
         // el usuario pide hacer RemoveNote
-        cout << "RemoveNote of " << tta.to_string() << endl;
+        cout << "IN of " << tta.to_string() << endl;
         auto init = chrono::system_clock::now();
-        cout << "Returned: " << LindaDriver.RN(tta).to_string() << endl;
+        cout << "Returned: " << LindaDriver.IN(tta).to_string() << endl;
         auto end = chrono::system_clock::now();
         auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - init);
 
@@ -122,7 +126,7 @@ int main(int argc, char *argv[]) {
              << " milliseconds." << endl;
       } else if (operation == 3) {
         // el usuario pide hacer ReadNote
-        cout << "ReadNote of " << tta.to_string() << endl;
+        cout << "RD of " << tta.to_string() << endl;
         auto init = chrono::system_clock::now();
         cout << "Returned: " << LindaDriver.RD(tta).to_string() << endl;
         auto end = chrono::system_clock::now();
@@ -133,10 +137,10 @@ int main(int argc, char *argv[]) {
       } else if (operation == 4) {
         bool found;
         // el usuario pide hacer ReadNote
-        cout << "ReadNote without locking of " << tta.to_string() << endl;
+        cout << "RD NOT blocking of " << tta.to_string() << endl;
         auto init = chrono::system_clock::now();
 
-        string tupla = LindaDriver.RX(tta, found).to_string();
+        string tupla = LindaDriver.RDP(tta, found).to_string();
 
         if (found) {
           cout << "Returned: " << tupla << endl;

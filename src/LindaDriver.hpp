@@ -13,10 +13,10 @@ private:
 
 public:
   LD(string ip, string p);        // constructor
-  void PN(Tuple t);               // PostNote
-  Tuple RN(Tuple t);              // RemoveNote
+  void OUT(Tuple t);               // PostNote
+  Tuple IN(Tuple t);              // RemoveNote
   Tuple RD(Tuple t);              // ReadNote
-  Tuple RX(Tuple t, bool &found); // ReadNote
+  Tuple RDP(Tuple t, bool &found); // ReadNote
   void STOP();                    // cierra la conexión del socket
 };
 
