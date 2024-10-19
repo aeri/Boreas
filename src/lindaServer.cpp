@@ -24,8 +24,6 @@
 bool STOP = false;
 string nf("NOT_FOUND");
 
-const int N = 100000;
-const int MAX_ATTEMPS = 50;
 const char FIN_MSG[] = "END OF SERVICE";
 regex e("(?:RD|RX|RN|PN):\\[[^\\],\n]+?(?:,[^\\],\n]+?)*\\]");
 
@@ -118,6 +116,8 @@ void handleClient(int clientSocket, MonitorLinda &ML) {
           close(clientSocket);
           exit(1);
         }
+
+        cout << "sent bytes " << send_bytes << endl;
       }
 
       else if (strncmp(buffer, FIN_MSG, length) == 0) {

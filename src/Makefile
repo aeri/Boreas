@@ -1,24 +1,21 @@
-
-#---------------------------------------------------------
 CC=g++
 
 DRIVER=LindaDriver
 MONITOR=monitorLinda
-#Clientes
-CLIENT=example
-OCLIENT=clienteInteractivo
-MIXTO=clienteMixto
-BRUTA=bruteforce
-#Fin de clientes
-SERVER=lindaServer
-TUPLAS=Tuple
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
+
+BASIC_EXAMPLE=example
+INTERACTIVE_EXAMPLE=interactiveExample
+
+SERVER=lindaServer
+TUPLAS=Tuple
+
 
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${OCLIENT} ${BRUTA} ${MIXTO}
+all: ${BASIC_EXAMPLE} ${SERVER} ${INTERACTIVE_EXAMPLE}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -44,39 +41,21 @@ ${DRIVER}: ${TUPLAS}.o ${SOCKET}.o ${DRIVER}.o
 #-----------------------------------------------------------
 # CLIENTE
 # Compilacion
-${CLIENT}.o: ${CLIENT}.cpp
-	${CC} -c ${CPPFLAGS} ${CLIENT}.cpp
+${BASIC_EXAMPLE}.o: ${BASIC_EXAMPLE}.cpp
+	${CC} -c ${CPPFLAGS} ${BASIC_EXAMPLE}.cpp
 
 # Linkado
-${CLIENT}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${CLIENT}.o -o ${CLIENT} ${SOCKETSFLAGS}
-#-----------------------------------------------------------
-# MIXTO
-# Compilacion
-${MIXTO}.o: ${MIXTO}.cpp
-	${CC} -c ${CPPFLAGS} ${MIXTO}.cpp
-
-# Linkado
-${MIXTO}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${MIXTO}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${MIXTO}.o -o ${MIXTO} ${SOCKETSFLAGS}
-#-----------------------------------------------------------
-# BRUTA
-# Compilacion
-${BRUTA}.o: ${BRUTA}.cpp
-	${CC} -c ${CPPFLAGS} ${BRUTA}.cpp
-
-# Linkado
-${BRUTA}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BRUTA}.o -o ${BRUTA} ${SOCKETSFLAGS}
+${BASIC_EXAMPLE}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BASIC_EXAMPLE}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${BASIC_EXAMPLE}.o -o ${BASIC_EXAMPLE} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # OTROCLIENTE
 # Compilacion
-${OCLIENT}.o: ${OCLIENT}.cpp
-	${CC} -c ${CPPFLAGS} ${OCLIENT}.cpp
+${INTERACTIVE_EXAMPLE}.o: ${INTERACTIVE_EXAMPLE}.cpp
+	${CC} -c ${CPPFLAGS} ${INTERACTIVE_EXAMPLE}.cpp
 
 # Linkado
-${OCLIENT}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${OCLIENT}.o  
-	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${OCLIENT}.o -o ${OCLIENT} ${SOCKETSFLAGS}
+${INTERACTIVE_EXAMPLE}: ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${INTERACTIVE_EXAMPLE}.o  
+	${CC} ${LDFLAGS} ${DRIVER}.o ${TUPLAS}.o ${SOCKET}.o ${INTERACTIVE_EXAMPLE}.o -o ${INTERACTIVE_EXAMPLE} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SERVIDOR
 # Compilacion
@@ -101,10 +80,8 @@ ${TUPLAS}.o: ${TUPLAS}.hpp  ${TUPLAS}.cpp
 clean:
 	$(RM) ${SOCKET}.o
 	$(RM) ${TUPLAS}.o
-	$(RM) ${CLIENT} ${CLIENT}.o
-	$(RM) ${BRUTA} ${BRUTA}.o
-	$(RM) ${MIXTO} ${MIXTO}.o
-	$(RM) ${OCLIENT} ${OCLIENT}.o
+	$(RM) ${BASIC_EXAMPLE} ${BASIC_EXAMPLE}.o
+	$(RM) ${INTERACTIVE_EXAMPLE} ${INTERACTIVE_EXAMPLE}.o
 	$(RM) ${SERVER} ${SERVER}.o
 	$(RM) ${DRIVER} ${DRIVER}.o
 	$(RM) ${MONITOR} ${MONITOR}.o

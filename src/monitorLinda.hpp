@@ -1,62 +1,57 @@
 
 /*
- * Fichero de interfaz del monitor de almacenamiento de tuplas.
+ * Tuple storage monitor interface
  */
 
 #ifndef _MONITORLINDA_HPP_
 #define _MONITORLINDA_HPP_
 
+#include "Tuple.hpp"
 #include <condition_variable>
 #include <mutex>
 #include <string>
-#include "Tuple.hpp"
 
 using namespace std;
 
-class MonitorLinda
-{
-   private:
-      struct bbdd{ 
-           //Tipo Matriz
-           struct Nodo
-           {
-                string valor; //
-                Nodo* sigComp; //Siguiente componente de la tupla leida (vertical)
-                Nodo* sigTupla; //Siguiente tupla (horizontal)
-            };
-            Nodo* primero; //Primer elemento de la primera tupla
-       };
+class MonitorLinda {
+private:
+  struct bbdd {
+    struct Node {
+      string valor;
+      // vertical
+      Node *nextComp;
+      // horizontal
+      Node *nextTuple;
+    };
+    Node *first;
+  };
 
-       // Variables permanentes del monitor
-   
-       bbdd tupleSpace1;   //Matriz tuplas dimension 1
-       bbdd tupleSpace2;   //Matriz tuplas dimension 2
-       bbdd tupleSpace3;   //Matriz tuplas dimension 3
-       bbdd tupleSpace4;   //Matriz tuplas dimension 4
-       bbdd tupleSpace5;   //Matriz tuplas dimension 5
-       bbdd tupleSpace6;   //Matriz tuplas dimension 6
+  bbdd tupleSpace1;
+  bbdd tupleSpace2;
+  bbdd tupleSpace3;
+  bbdd tupleSpace4;
+  bbdd tupleSpace5;
+  bbdd tupleSpace6;
 
-       mutex mtxMonitor;  // FUNDAMENTAL: mutex
-   
-      // Variables condición del monitor
+  mutex mtxMonitor;
 
-      condition_variable hay_tupla1; //indica si hay tuplas de dimension 1
-      condition_variable hay_tupla2; //indica si hay tuplas de dimension 2
-      condition_variable hay_tupla3; //indica si hay tuplas de dimension 3
-      condition_variable hay_tupla4; //indica si hay tuplas de dimension 4
-      condition_variable hay_tupla5; //indica si hay tuplas de dimension 5
-      condition_variable hay_tupla6; //indica si hay tuplas de dimension 6
-   
-    public:
-      // Colección de funciones del monitor
-       MonitorLinda(); //constructor
+  condition_variable new_tuple_1;
+  condition_variable new_tuple_2;
+  condition_variable new_tuple_3;
+  condition_variable new_tuple_4;
+  condition_variable new_tuple_5;
+  condition_variable new_tuple_6;
 
-       ~MonitorLinda(); // Destrutor
+public:
+  MonitorLinda();
 
-      void PostNote(Tuple t); //Añade una tupla al espacio de tuplas
+  ~MonitorLinda();
 
-      void RemoveNote(Tuple t, Tuple& r);  //Busca una tupla, toma su valor y la borra del espacio de tuplas
-
-      void ReadNote(Tuple t, Tuple& r, bool locked); //Busca una tupla en el espacio de tuplas con un patrón específico
+  // add tuple
+  void PostNote(Tuple t);
+  // search, get and remove tuple
+  void RemoveNote(Tuple t, Tuple &r);
+  // search and get tuple
+  void ReadNote(Tuple t, Tuple &r, bool locked);
 };
 #endif
