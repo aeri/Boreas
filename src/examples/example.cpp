@@ -1,5 +1,4 @@
-#include "LindaDriver.hpp"
-#include "Tuple.hpp"
+#include "../../lib/LindaDriver/LindaDriver.hpp"
 #include <cstring>
 
 using namespace std;

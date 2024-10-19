@@ -1,10 +1,8 @@
 #ifndef _LINDADRIVER_HPP_
 #define _LINDADRIVER_HPP_
 
-#include "Socket.hpp"
-#include "Tuple.hpp"
-#include <cstring>
-#include <iostream>
+#include "../Socket/Socket.hpp"
+#include "../Tuple/Tuple.hpp"
 
 class LD : public Socket {
 private:

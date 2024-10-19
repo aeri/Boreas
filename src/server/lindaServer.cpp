@@ -1,25 +1,10 @@
-#include <cstring>
 #include <iostream>
 #include <regex>
-#include <sstream>
-#include <string>
 #include <thread>
-
 #include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
 
-#include "Tuple.hpp"
-#include "monitorLinda.hpp"
+#include "../../lib/MonitorLinda/monitorLinda.hpp"
 
 bool STOP = false;
 string NOT_FOUND_ERROR("NOT_FOUND");

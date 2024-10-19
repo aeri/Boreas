@@ -6,7 +6,7 @@
 #ifndef _MONITORLINDA_HPP_
 #define _MONITORLINDA_HPP_
 
-#include "Tuple.hpp"
+#include "../Tuple/Tuple.hpp"
 #include <condition_variable>
 #include <mutex>
 #include <string>

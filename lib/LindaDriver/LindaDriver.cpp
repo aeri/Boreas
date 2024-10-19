@@ -1,8 +1,4 @@
 #include "LindaDriver.hpp"
-#include "Socket.hpp"
-#include "Tuple.hpp"
-#include <cstring>
-#include <iostream>
 #include <sstream>
 #include <thread>
 

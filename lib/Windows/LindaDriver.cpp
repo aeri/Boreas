@@ -237,7 +237,7 @@ void LD::postNote(Tuple t)
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
 
-    string message = "PN:" + t.to_string();
+    string message = "OUT:" + t.to_string();
 
     // Send the tuple to be postnoted
     sending(message);
@@ -257,7 +257,7 @@ void LD::postNote(Tuple t)
  */
 Tuple LD::removeNote(Tuple t)
 {
-    string message = "RN:" + t.to_string();
+    string message = "IN:" + t.to_string();
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
@@ -310,7 +310,7 @@ Tuple LD::readNote(Tuple t)
 */  
 Tuple LD::readNoteX(Tuple t, bool& found)
 {
-    string message = "RX:" + t.to_string();
+    string message = "RDP:" + t.to_string();
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
