@@ -1,29 +1,7 @@
 /*
- * Copyright (c) 2020 Naval Alcalá
- * Copyright (c) 2020 Rubén Rodríguez
- *
- * This file is part of Boreas.
- * Boreas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Boreas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*
  * Fichero de implementación del monitor de almacenamiento de tuplas.
  */
 
-#include <iomanip>
-#include <queue>
-#include <thread>
 #include "monitorLinda.hpp"
 
 using namespace std;
@@ -50,46 +28,7 @@ MonitorLinda::MonitorLinda(){
  * Pre:
  * Post:Destructor de la clase monitorLinda
  */
-MonitorLinda::~MonitorLinda(){
-
-	bbdd::Nodo* aux;
-	// Recorrido de todos los espacios de tuplas
-	for (int i = 1; i <= NUM_MATRIX; ++i){
-		switch (i){
-		        // Se guarda en <<aux>> el puntero a la matriz que se va a borrar 
-			case 1: aux=tupleSpace1.primero; break;
-			case 2: aux=tupleSpace2.primero; break;
-			case 3: aux=tupleSpace3.primero; break;
-			case 4: aux=tupleSpace4.primero; break;
-			case 5: aux=tupleSpace5.primero; break;
-			case 6: aux=tupleSpace6.primero; break;
-			default : 
-				// Caso de error
-				aux = nullptr; 
-				cerr << "mon-error: tuple space > 6" << endl;
-		}
-		
-		// Determinación de la componente siguiente de la tupla 
-		bbdd::Nodo* sig = aux ->sigComp;
-		bbdd::Nodo* del;
-		
-		// Borrado de todas las tuplas (por columnas)
-		while (aux != nullptr){
-			//Borrado de la tupla componente a componente (por filas)
-			while (sig != nullptr){
-				del = sig -> sigComp;
-				delete (sig);
-				sig = del;		
-			}
-
-			// Almacenamiento de la siguiente tupla a borrar
-			// Borrado de la primera componente de la tupla 
-			del = aux -> sigTupla;
-			delete (aux);
-			aux = del;
-		}
-	}
-};
+MonitorLinda::~MonitorLinda(){};
 
 
 

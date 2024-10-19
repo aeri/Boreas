@@ -1,21 +1,4 @@
 
-# Copyright (c) 2020 Naval Alcalá
-# Copyright (c) 2020 Rubén Rodríguez
-#
-# This file is part of Boreas.
-# Boreas is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Boreas is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
-
 #---------------------------------------------------------
 CC=g++
 
@@ -29,14 +12,13 @@ BRUTA=bruteforce
 #Fin de clientes
 SERVER=lindaServer
 TUPLAS=Tuple
-SERVEI=servei
 SOCKET_DIR=Socket
 SOCKET=${SOCKET_DIR}/Socket
 
 CPPFLAGS=-I. -I${SOCKET_DIR} -O2 -std=c++11 -lsockets -Wall# Flags compilacion
 LDFLAGS=-pthread # Flags linkado threads
 
-all: ${CLIENT} ${SERVER} ${SERVEI} ${OCLIENT} ${BRUTA} ${MIXTO}
+all: ${CLIENT} ${SERVER} ${OCLIENT} ${BRUTA} ${MIXTO}
 #----------------------------------------------------------------------------
 #Para gestionar opciones de compilación según la máquina: hendrix tiene sus manías
 #Descomentar la siguiente línea para compilar en hendrix
@@ -48,8 +30,8 @@ ${MONITOR}.o: ${MONITOR}.hpp ${MONITOR}.cpp
 	${CC} -c ${CPPFLAGS} ${MONITOR}.cpp
 
 # Linkado
-${MONITOR}: ${TUPLAS}.o ${SOCKET}.o ${MONITOR}.o  
-	${CC} ${TUPLAS}.o ${SOCKET}.o ${MONITOR}.o -o ${MONITOR} ${SOCKETSFLAGS}
+${MONITOR}: ${TUPLAS}.o ${MONITOR}.o  
+	${CC} ${TUPLAS}.o ${MONITOR}.o -o ${MONITOR} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # DRIVER
 # Compilacion
@@ -102,17 +84,8 @@ ${SERVER}.o: ${SERVER}.cpp
 	${CC} -c ${CPPFLAGS} ${SERVER}.cpp
 
 # Linkado
-${SERVER}: ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o
-	${CC} ${LDFLAGS} ${TUPLAS}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
-#-----------------------------------------------------------
-# SERVEI
-# Compilacion
-${SERVEI}.o: ${SERVEI}.cpp 
-	${CC} -c ${CPPFLAGS} ${SERVEI}.cpp
-
-# Linkado
-${SERVEI}: ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVEI}.o
-	${CC} ${LDFLAGS} ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVEI}.o -o ${SERVEI} ${SOCKETSFLAGS}
+${SERVER}: ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVER}.o
+	${CC} ${LDFLAGS} ${TUPLAS}.o ${MONITOR}.o ${SOCKET}.o ${SERVER}.o -o ${SERVER} ${SOCKETSFLAGS}
 #-----------------------------------------------------------
 # SOCKETS
 # Compilacion libreria de Sockets
@@ -133,6 +106,5 @@ clean:
 	$(RM) ${MIXTO} ${MIXTO}.o
 	$(RM) ${OCLIENT} ${OCLIENT}.o
 	$(RM) ${SERVER} ${SERVER}.o
-	$(RM) ${SERVEI} ${SERVEI}.o
 	$(RM) ${DRIVER} ${DRIVER}.o
 	$(RM) ${MONITOR} ${MONITOR}.o
