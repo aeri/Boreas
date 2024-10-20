@@ -1,22 +1,3 @@
-/*
- * Copyright (c) 2020 Naval Alcalá
- * Copyright (c) 2020 Rubén Rodríguez
- *
- * This file is part of Boreas.
- * Boreas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Boreas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Boreas.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -256,7 +237,7 @@ void LD::postNote(Tuple t)
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
 
-    string message = "PN:" + t.to_string();
+    string message = "OUT:" + t.to_string();
 
     // Send the tuple to be postnoted
     sending(message);
@@ -276,7 +257,7 @@ void LD::postNote(Tuple t)
  */
 Tuple LD::removeNote(Tuple t)
 {
-    string message = "RN:" + t.to_string();
+    string message = "IN:" + t.to_string();
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
@@ -329,7 +310,7 @@ Tuple LD::readNote(Tuple t)
 */  
 Tuple LD::readNoteX(Tuple t, bool& found)
 {
-    string message = "RX:" + t.to_string();
+    string message = "RDP:" + t.to_string();
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     int error;
